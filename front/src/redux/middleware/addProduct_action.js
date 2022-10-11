@@ -1,14 +1,15 @@
 import axios from "axios";
 //
-function addProduct(product) {
+function addProduct(productValues) {
   //
+  // console.log("ok", product) // useRef() 함수 객체의 그 자체를 백엔드로 보내면 에러가 발생함
   return async (_dispatch, getState) => {
     //
     const newProduct = await axios({
       //
       url: "http://localhost:8000/addProduct",
       method: "post",
-      data: product,
+      data: { productValues },
     });
     // console.log(newProduct);
     // if (newProduct.data) {

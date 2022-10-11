@@ -21,6 +21,6 @@ sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
 app.post("/addProduct", (req, res) => {
   //
-  const { product } = req.body;
-  console.log(product);
+  console.log(req.body)
+  const { productValues } = req.body;
 });

@@ -133,10 +133,6 @@ Uncaught Error: Cannot find module 'react-redux'
 백엔드에 data가 도달하는 지 확인해보려는데 8th 문제 발생
 Uncaught (in promise) TypeError: Converting circular structure to JSON
     --> starting at object with constructor 'HTMLInputElement'
-    |     property '__reactFiber$nzd0uv7x6n' -> object with constructor 'FiberNode'
-    --- property 'stateNode' closes the circle
-    at stringify (<anonymous>)
-    at stringifySafely
 
 운동 가야 하므로 일단 여기까지...
 집에 가서 꼭 해결하자꾸나!
@@ -149,3 +145,29 @@ fatal: not a git repository (or any of the parent directories): .git
 
 -- 해결
 git init을 안 해서...
+
+-- 07:55
+지하철 안 작업 중 10th 문제 발생
+ConnectionError [SequelizeConnectionError]: Unknown database 'gb_project'
+
+-- 해결
+MySQL 스키마 생성을 안 해서...
+
+-- 20:15
+컨디션이 안 좋군...
+
+-- 8th 문제 해결
+HTML 태그가 담겨있어서 그런 것인가, 아니면 그로 인한 순환 참조 같은 문제가 발생한 것인가...
+
+useRef() 함수 객체의 그 자체를 백엔드로 보내면 에러가 발생하여
+input의 onChange() 함수를 통해 useRef() 함수 객체의 value 키 값을 배열로 만든 다음 원하는 값을 담아 객체로 전달
+
+그런데 여기서 ref란...?
+onChange() 함수 없이도 실시간으로 값이 바뀌는 것인가?
+
+-- 구글링
+useRef() 를 사용하여 Ref 객체를 만들고, 이 객체를 우리가 선택하고 싶은 DOM 에 ref 값으로 설정해주어야 합니다.
+그러면, Ref 객체의 .current 값은 우리가 원하는 DOM 을 가르키게 됩니다.
+
+-- 20:48
+input type="number" step="1000"
