@@ -140,3 +140,12 @@ Uncaught (in promise) TypeError: Converting circular structure to JSON
 
 운동 가야 하므로 일단 여기까지...
 집에 가서 꼭 해결하자꾸나!
+
+-- [ 22.10.12 ]
+
+-- 01:52
+노트북 깃 설정에서 9th 문제 발생
+fatal: not a git repository (or any of the parent directories): .git
+
+-- 해결
+git init을 안 해서...
