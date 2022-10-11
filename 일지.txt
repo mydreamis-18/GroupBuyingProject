@@ -1,0 +1,12 @@
+-- 10.11.16.43
+-- 프로젝트 주제는 공동 구매의 쇼핑몰 페이지
+
+-- git 계정도 새로 생성했음!
+
+-- 지금은 익숙하지만 언젠간 까먹을 지 모를 필요한 git 명령어
+git init
+git config --global user.name "mydreamis-18"
+git config --global user.email "email"
+git config --global --list
+git branch -M main
+git remote add origin https://github.com/mydreamis-18/GroupBuyingProject.git
