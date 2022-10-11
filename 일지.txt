@@ -1,5 +1,7 @@
--- 10.11.16.43
--- 프로젝트 주제는 공동 구매의 쇼핑몰 페이지
+-- [ 22.10.11 ]
+
+-- 16:43
+프로젝트 주제는 공동 구매의 쇼핑몰 페이지
 
 -- git 계정도 새로 생성했음!
 
@@ -10,3 +12,131 @@ git config --global user.email "email"
 git config --global --list
 git branch -M main
 git remote add origin https://github.com/mydreamis-18/GroupBuyingProject.git
+git add .
+git commit -m "first commit"
+git push -u origin main
+
+-- 자 여기서 1st 문제 발생...
+remote: Permission to mydreamis-18/GroupBuyingProject.git denied to mydreamis-a.
+fatal: unable to access 'https://github.com/mydreamis-18/GroupBuyingProject.git/': The requested URL returned error: 403
+
+-- 해결 방법
+제어판 - 사용자 계정 - windows 자격 증명 관리 - github 계정 제거 후 git push 재시도
+
+-- 17:05
+오늘 목표
+상품 등록 페이지 완성
+전체적인 환경 구축 및 상품 데이터에 대한 시퀄라이즈 완성
+
+-- front 리액트 폴더 생성 명령어
+npx create-react-app front
+
+-- back 명령어
+npm init -y
+npm --save-dev nodemon
+npm i express sequelize mysql2 redux react-redux redux-thunk react-router-dom axios cors styled-components
+
+-- .gitignore 파일
+node_modules/
+
+-- 17:17
+그 다음 할 일
+백엔드 서버 연결
+프론트와 백엔드 연결
+
+-- 17:34
+백엔드 서버 연결 작업 순서
+1. app.js 파일 생성 => express().listen(PORT)
+2. .env 파일 생성 => DATABASE_PASSWORD = ""
+3. config 파일 생성 => MySQL 연결을 위한 config 객체 생성
+4. model 폴더 생성 => db 객체 생성 => sequelize 키 값에 MySQL 연결 객체 생성
+5. app.js 파일 => MySQL 연동 => sequelize.sync({ force: false })
+
+-- 18:05
+프론트와 백엔드 연결 중 2nd 문제 발생
+Warning: Functions are not valid as a React child. This may happen if you return a Component instead of <Component /> from render. Or maybe you meant to call this function rather than return it.
+
+-- 해결
+문법 => { AddProduct } => <AddProduct />
+
+-- 18:16
+스타일드 컴포넌트 설정 중 3rd 문제 발생
+Uncaught Error: Cannot find module 'styled-components'
+
+-- 해결
+여러 가지의 npm 모듈을 동시에 설치할 때 글자 수 제한이 있나 봄... 재설치 진행
+
+-- 18:20
+스타일드 컴포넌트 설정 중 4th 문제 발생
+Warning: The tag <flex_temp> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.
+
+-- 해결
+문법 => flex_temp => Flex_temp
+
+5th 문제 발생
+Imported JSX component Flex_temp must be in PascalCase or SCREAMING_SNAKE_CASE
+
+-- 해결
+문법 => Flex_temp => FlexTemp
+
+-- 18:29
+상품 등록 페이지
+프론트 1차 뼈대 완료
+
+이제 axios 사용해서 백엔드로 인풋 데이터 넘기기
+백엔드 시퀄라이즈 모델 생성하기
+
+리덕스는 나중에 하자...
+
+-- 18:39
+프론트 파일명 변경 후 parsing error 6th 문제 발생
+
+-- 해결
+리액트 서버 종료 후 재실행
+
+-- 18:43
+프론트 input 값에 useRef() 함수 사용하기
+
+여러 개의 useRef() 관리하기
+=> 초기 값을 배열로 선언
+=> <input ref={(el) => (product.current[0] = el)} />
+
+-- 18:58
+axios 사용하기
+axios 사용하려면 데이터의 동기적 처리를 위해 미들웨어 환경을 먼저 구축해놔야 하는 군...
+
+-- question
+action은 모아서 어디로 가는가?
+
+-- 19:18
+프론트 저장소 생성 및 props 전달 중 7th 문제 발생
+Uncaught Error: Cannot find module 'react-redux'
+
+-- 해결
+아무래도 모듈이 누락 설치된 듯... 재설치 진행
+
+-- 프론트 redux 저장소 작업 순서
+1. store 파일 생성 => 저장소 생성 => createStore(reducer, applyMiddleware(thunk))
+2. reducer 파일 생성 => reducer() 함수 선언
+3. middleware 폴더의 action 파일 생성 => axios 사용하는 함수 선언
+4. index.js 파일 => Provider 컴포넌트에 props로 저장소 전달 => <Provider store={store}>
+
+-- 19:31
+이제 axios를 사용해보자!
+
+프론트 쪽 연결 중...
+
+-- question
+저장소의 값을 만지지 않더라도 반드시 useDispatch() 함수를 거쳐야 하는 건가?
+
+-- 19:55
+백엔드에 data가 도달하는 지 확인해보려는데 8th 문제 발생
+Uncaught (in promise) TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'HTMLInputElement'
+    |     property '__reactFiber$nzd0uv7x6n' -> object with constructor 'FiberNode'
+    --- property 'stateNode' closes the circle
+    at stringify (<anonymous>)
+    at stringifySafely
+
+운동 가야 하므로 일단 여기까지...
+집에 가서 꼭 해결하자꾸나!
