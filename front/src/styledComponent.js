@@ -1,6 +1,6 @@
 import styled from "styled-components";
 //
-const FlexTemp = styled.div`
+const FlexDiv = styled.div`
   border: 1px solid black;
   justify-content: center;
   flex-direction: column;
@@ -15,5 +15,8 @@ const Title = styled.p`
   font-size: 3vw;
   margin: 1vw 0;
 `;
+const AddProductImg = styled.img`
+  width: 10vw;
+`;
 //
-export { FlexTemp, Title };
+export { FlexDiv, Title, AddProductImg };

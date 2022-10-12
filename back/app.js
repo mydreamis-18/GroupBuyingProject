@@ -16,11 +16,21 @@ app.use(cors(options));
 app.use(express.json());
 //
 // ㅜ 서버 실행 시 MySQL 연동
-const { sequelize } = require("./model");
+const { sequelize, Product } = require("./model");
 sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
 app.post("/addProduct", (req, res) => {
   //
-  console.log(req.body)
-  const { productValues } = req.body;
+  const { name } = req.body.productValues;
+  //
+  // console.log(req.body.productValues.start_date); // axiois before (object) 값과는 다른 값이군... '2022-10-12T05:35:18.107Z' (string)
+  //
+  Product.findOne({ where: { name } }).then((obj) => {
+    if (obj === null) {
+      //
+      Product.create(req.body.productValues).then(() => res.send("상품이 등록되었습니다."));
+    }
+    //
+    else res.send("같은 이름의 상품이 이미 등록되어 있습니다.");
+  });
 });

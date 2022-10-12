@@ -1,58 +1,89 @@
+import { FlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
-import { FlexTemp, Title } from "../styledComponent";
 import { useDispatch } from "react-redux";
+import { DatePicker } from "../component";
 import { useState, useRef } from "react";
 //
 const AddProduct = () => {
   //
-  const product = useRef([]);
   const dispatch = useDispatch();
-  product.value = new Array(0);
+  const product = useRef([]);
+  product.current = {};
   //
-  // console.log(product.current?.value); // 초기 값을 배열로 선언하지 않을 경우에 초기 값 undefined (물음표 필수)
-  // console.log(product.current.value); // 초기 값을 배열로 선언할 경우에 초기 값 undefined (물음표 필요 없음)
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(startDate);
+  //
+  // ㅜ 사진 선택 시 이미지 미리보기 기능을 위해 리렌더링 유도
+  const [img, setImg] = useState("");
   //
   return (
-    <FlexTemp>
+    <FlexDiv>
       <Title>상품 등록</Title>
       <label>상품명 </label>
-      <input ref={(el) => (product.current[0] = el)} onChange={(e) => product.value[0] = e.target.value}/>
+      <input ref={(el) => (product.current.name = el)} />
       <br />
-      <label>이미지... (파일 업로드 기능 한 번도 안 해봤는데...) </label>
-      <input ref={(el) => (product.current[1] = el)} onChange={(e) => product.value[1] = e.target.value}/>
+      <label>상품 이미지 </label>
+      <input ref={(el) => (product.current.img = el)} onChange={(e) => setImg(e.target.files[0])} type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} />
       <br />
-      <label>설명 </label>
-      <input ref={(el) => (product.current[2] = el)} onChange={(e) => product.value[2] = e.target.value} />
+      <AddProductImg src={img ? URL.createObjectURL(img) : <></>} alt="" />
+      <br />
+      <label>상품 설명 </label>
+      <input ref={(el) => (product.current.content = el)} />
       <br />
       <label>재고 수량 </label>
-      <input ref={(el) => (product.current[3] = el)} onChange={(e) => product.value[3] = e.target.value} type="number"/>
+      <input ref={(el) => (product.current.stock_count = el)} type="number" min={"0"} />
       <br />
       <label>즉시 구매가 </label>
-      <input ref={(el) => (product.current[4] = el)} onChange={(e) => product.value[4] = e.target.value} type="number" step={"1000"}/>
+      <input ref={(el) => (product.current.price = el)} type="number" step={"1000"} min={"0"} />
       <br />
       <label>공동 구매가 </label>
-      <input ref={(el) => (product.current[5] = el)} onChange={(e) => product.value[5] = e.target.value} type="number" step={"1000"}/>
+      <input ref={(el) => (product.current.discount_price = el)} type="number" step={"1000"} min={"0"} />
       <br />
-      <label>판매 시작 시간 </label>
-      <input ref={(el) => (product.current[6] = el)} onChange={(e) => product.value[6] = e.target.value}/>
-      <br />
-      <label>판매 종료 시간 </label>
-      <input ref={(el) => (product.current[7] = el)} onChange={(e) => product.value[7] = e.target.value}/>
+      <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} />
       <br />
       <button onClick={addProduct}>상품 등록하기</button>
       <br />
-    </FlexTemp>
+    </FlexDiv>
   );
   function addProduct() {
     //
-    product.current.forEach((el) => {
-      console.log(el.value);
-    });
-    dispatch(addProduct_action.addProduct(product.value));
+    let isNull = false;
     //
-    // dispatch(addProduct_action.addProduct(product)); // useRef() 함수 객체의 그 자체를 백엔드로 보내면 에러가 발생함
+    // ㅜ isNull 유효성 체크
+    for (const key in product.current) {
+      //
+      if (Object.hasOwnProperty.call(product.current, key)) {
+        //
+        if (product.current[key].value === "") {
+          //
+          isNull = true;
+          break;
+        }
+      }
+    }
+    if (isNull) {
+      //
+      alert("빈 값이 있으면 등록이 불가합니다.\n(혹은 숫자로 올바르게 입력했는지 확인해주세요.)");
+      return;
+    }
+    // ㅜ ref 객체 그대로를 백엔드로 보내면 에러 발생함 주의
+    for (const key in product.current) {
+      //
+      if (Object.hasOwnProperty.call(product.current, key)) {
+        //
+        product.current[key] = product.current[key].value;
+      }
+    }
+    // console.log(product.current.img); // C:\fakepath\서현진 배우님.jpeg
+    product.current.img = img;
+    URL.revokeObjectURL(img);
+    setImg("");
     //
-    // console.log(product.current.value); // 초기 값을 배열로 선언하지 않을 경우에 초기 값 "" (물음표 필요 없음)
+    // ㅜ 판매 시작 및 종료 시간을 타임스탬프로 저장
+    product.current.end_date = endDate.getTime();
+    product.current.start_date = startDate.getTime();
+    //
+    dispatch(addProduct_action.addProduct(product.current));
   }
 };
 export default AddProduct;
