@@ -1,3 +1,4 @@
+import Product from "./Product";
 import AddProduct from "./AddProduct";
 //
-export { AddProduct };
+export { Product, AddProduct };

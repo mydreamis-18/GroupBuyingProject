@@ -1,8 +1,8 @@
 import { FlexDiv, Title, AddProductImg } from "../styledComponent";
-import { addProduct_action } from "../redux/middleware";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { DatePicker } from "../component";
-import { useState, useRef } from "react";
+import axios from "axios";
 //
 const AddProduct = () => {
   //
@@ -16,6 +16,15 @@ const AddProduct = () => {
   // ㅜ 사진 선택 시 이미지 미리보기 기능을 위해 리렌더링 유도
   const [img, setImg] = useState("");
   //
+  // ㅜ state 값 초기화하기
+  useEffect(() => {
+    //
+    if (img !== "") setImg("");
+    //
+    setStartDate(new Date());
+    setEndDate(startDate);
+  }, []);
+  //
   return (
     <FlexDiv>
       <Title>상품 등록</Title>
@@ -23,7 +32,7 @@ const AddProduct = () => {
       <input ref={(el) => (product.current.name = el)} />
       <br />
       <label>상품 이미지 </label>
-      <input ref={(el) => (product.current.img = el)} onChange={(e) => setImg(e.target.files[0])} type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} />
+      <input onChange={(e) => setImg(e.target.files[0])} type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} />
       <br />
       <AddProductImg src={img ? URL.createObjectURL(img) : <></>} alt="" />
       <br />
@@ -41,24 +50,23 @@ const AddProduct = () => {
       <br />
       <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} />
       <br />
-      <button onClick={addProduct}>상품 등록하기</button>
+      <button onClick={addProductBtn}>상품 등록하기</button>
       <br />
     </FlexDiv>
   );
-  function addProduct() {
+  function addProductBtn() {
+    //
+    console.log(product.current);
     //
     let isNull = false;
     //
     // ㅜ isNull 유효성 체크
     for (const key in product.current) {
       //
-      if (Object.hasOwnProperty.call(product.current, key)) {
+      if (product.current[key].value === "") {
         //
-        if (product.current[key].value === "") {
-          //
-          isNull = true;
-          break;
-        }
+        isNull = true;
+        break;
       }
     }
     if (isNull) {
@@ -66,24 +74,42 @@ const AddProduct = () => {
       alert("빈 값이 있으면 등록이 불가합니다.\n(혹은 숫자로 올바르게 입력했는지 확인해주세요.)");
       return;
     }
-    // ㅜ ref 객체 그대로를 백엔드로 보내면 에러 발생함 주의
+    //
+    // ㅜ 태그가 담긴 ref 객체 그대로를 백엔드로 보내면 에러 발생함 주의
+    // for (const key in product.current) {
+    //   //
+    //   product.current[key] = product.current[key].value;
+    // }
+    //
+    const formData = new FormData();
+    //
     for (const key in product.current) {
       //
-      if (Object.hasOwnProperty.call(product.current, key)) {
-        //
-        product.current[key] = product.current[key].value;
-      }
+      formData.append(key, product.current[key].value);
     }
-    // console.log(product.current.img); // C:\fakepath\서현진 배우님.jpeg
-    product.current.img = img;
+    formData.append("img_path", "/tmp/uploads/" + img.name);
+    formData.append("start_date", startDate.toString());
+    formData.append("end_date", endDate.toString());
+    formData.append("img", img);
     URL.revokeObjectURL(img);
-    setImg("");
     //
-    // ㅜ 판매 시작 및 종료 시간을 타임스탬프로 저장
-    product.current.end_date = endDate.getTime();
-    product.current.start_date = startDate.getTime();
+    console.log(typeof formData);
+    addProduct(formData);
+  }
+  /////////////////////////////////////////////////////////////////
+  /**
+   * 입력한 상품 정보를 DB에 저장하기 위해 axios 통신하는 함수 10.13.20
+   * @param {object} formData
+   */
+  async function addProduct(formData) {
     //
-    dispatch(addProduct_action.addProduct(product.current));
+    const _addProduct = await axios({
+      //
+      url: "http://localhost:8000/addProduct/new",
+      method: "post",
+      data: formData,
+    });
+    alert(_addProduct.data);
   }
 };
 export default AddProduct;

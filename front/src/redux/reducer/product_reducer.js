@@ -1,5 +1,6 @@
 const init = {
-  temp: "",
+  //
+  currentProductId: "",
 };
 function reducer(state = init, action) {
   //
@@ -8,7 +9,7 @@ function reducer(state = init, action) {
     //
     case "":
       return state;
-    //
+
     default:
       return state;
   }

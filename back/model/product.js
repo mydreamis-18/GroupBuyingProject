@@ -11,11 +11,11 @@ class Product extends Sequelize.Model {
           allowNull: false,
           unique: true,
         },
-        img: {
+        content: {
           type: Sequelize.STRING,
           allowNull: false,
         },
-        content: {
+        img_path: {
           type: Sequelize.STRING,
           allowNull: false,
         },

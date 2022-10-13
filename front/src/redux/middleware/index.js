@@ -1,3 +1,3 @@
-import { addProduct_action } from "./addProduct_action";
+import { getProduct_action } from "./getProduct_action";
 //
-export { addProduct_action };
+export { getProduct_action };

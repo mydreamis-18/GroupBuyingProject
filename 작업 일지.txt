@@ -105,9 +105,6 @@ Imported JSX component Flex_temp must be in PascalCase or SCREAMING_SNAKE_CASE
 axios 사용하기
 axios 사용하려면 데이터의 동기적 처리를 위해 미들웨어 환경을 먼저 구축해놔야 하는 군...
 
--- question
-action은 모아서 어디로 가는가?
-
 -- 19:18
 프론트 저장소 생성 및 props 전달 중 7th 문제 발생
 Uncaught Error: Cannot find module 'react-redux'
@@ -125,9 +122,6 @@ Uncaught Error: Cannot find module 'react-redux'
 이제 axios를 사용해보자!
 
 프론트 쪽 연결 중...
-
--- question
-저장소의 값을 만지지 않더라도 반드시 useDispatch() 함수를 거쳐야 하는 건가?
 
 -- 19:55
 백엔드에 data가 도달하는 지 확인해보려는데 8th 문제 발생
@@ -153,7 +147,7 @@ ConnectionError [SequelizeConnectionError]: Unknown database 'gb_project'
 -- 해결
 MySQL 스키마 생성을 안 해서...
 
--- 20:15
+-- 08:15
 컨디션이 안 좋군...
 
 -- 8th 문제 해결
@@ -162,14 +156,14 @@ HTML 태그가 담겨있어서 그런 것인가, 아니면 그로 인한 순환 
 useRef() 함수 객체의 그 자체를 백엔드로 보내면 에러가 발생하여
 input의 onChange() 함수를 통해 useRef() 함수 객체의 value 키 값을 배열로 만든 다음 원하는 값을 담아 객체로 전달
 
-그런데 여기서 ref란...?
-onChange() 함수 없이도 실시간으로 값이 바뀌는 것인가?
+그런데 여기서 ref란...
+onChange() 함수 없이도 실시간으로 값이 바뀌는 것인가...
 
 -- 구글링
 useRef() 를 사용하여 Ref 객체를 만들고, 이 객체를 우리가 선택하고 싶은 DOM 에 ref 값으로 설정해주어야 합니다.
 그러면, Ref 객체의 .current 값은 우리가 원하는 DOM 을 가르키게 됩니다.
 
--- 20:48
+-- 08:48
 input type="number" step="1000" min="0"
 
 -- 09:38
@@ -217,7 +211,7 @@ datepicker 참고 링크
 https://reactdatepicker.com/#example-select-time
 
 -- 11:35
-index.js 파일에서 datepicket style 조정
+index.js 파일에서 datepicker style 조정
 
 .react-datepicker-wrapper {
   width: auto !important;
@@ -300,7 +294,9 @@ URL.createObjectURL(product.value.img) => 삼항 연산자 => URL.createObjectUR
 -- 18:53
 이제 문제는 MySQL에 이미지 파일 저장하는 것...
 
-multer 모듈을 사용하려면 axios가 아닌 form 사용해야만 하는 건가?
+multer 모듈을 사용하려면 form 태그를 반드시 사용해야만 하는 건가 => 놉
+form 태그를 사용할 수도 있고 formData() 객체를 사용해서 axios 통신을 할 수도 있음
+
 그런데 form으로 사후처리가 가능하던가?
 
 -- 19:57
@@ -313,8 +309,8 @@ POST http://localhost:8000/addProduct net::ERR_CONNECTION_REFUSED
 Uncaught (in promise) AxiosError {message: 'Network Error',
 WHERE parameter "name" has invalid "undefined" value
 
-ref 객체의 문제인가?
-리렌더링에도 유지되는 범위는 current 키 값 한정인가?
+ref 객체의 문제인가...
+리렌더링에도 유지되는 범위는 current 키 값 한정인가...
 
 -- 21:22
 겁나 허탈하게...
@@ -329,3 +325,149 @@ current 키 값에 태그 대신 value 값으로 덮어씌움으로써 해결함
 
 이제 다음 작업은...
 등록된 상품 정보를 이용해 상품 상세 페이지 구현
+
+-- [ 22.10.13 ]
+
+-- 10:04
+작업 일지 작성 완료
+작업 시작
+
+오늘 먼저 할 것
+
+상품 상세 페이지 뼈대 구현
+
+라우터 설정을 먼저 해야겠군요~
+
+-- 라우터 설정 중에 15th 문제 발생
+Uncaught Error: [Router] is not a <Route> component. All component children of <Routes> must be a <Route> or <React.Fragment>
+
+-- 해결
+문법 => Route
+
+라우터 설정 완료
+
+우선 DB의 데이터를 가져와 봐야겠군...
+
+-- question
+1) 액션이 담긴 미들웨어 함수에서 액션은 어디로 가는가 => 리듀서에서 캐치
+
+액션 => type, payload가 담긴 객체
+
+디스패치가 동작함으로써 액션 함수 안에서 데이터 요청 및 응답을 하고 액션을 보내면 리듀서에서 잡음
+
+2) redux store 데이터를 전혀 사용하지 않음에도 불구하고 axios 통신을 위해서는 useDispatch() 함수의 사용이 반드시 필요한가 => 놉
+
+미들웨어는 redux를 사용한다는 전제하에 보다 편리하기 위해 사용하는 것
+
+3) 액션을 통해 axios에서 받은 데이터는 무조건 저장소를 거쳐야만이 컴포넌트에서 사용할 수 있는 건가 => 놉
+
+4) 페이지에 따라 다른 폰트를 적용할 경우에도 폰트 폴더는 public에 있어야 하는 것인가 => Yes
+
+5) 액션 함수의 매개 변수인 getState() 함수의 역할은 무엇이고 실행하면 어떻게 되는가 => 저장소 그 자체의 값을 반환해줌
+
+또한 저장소는 콜 스택에 쌓여서 동기적 처리가 되기 때문에
+액션을 던져주는 함수 바로 아래서 getState() 함수를 실행하면 변경된 저장소의 값을 바로 확인할 수 있음
+
+6) 업로드 이미지를 DB에 저장하는 과정
+
+input 태그의 file을 담은 formData와 다른 데이터들을 axios로 전송해서 multer 모듈을 미들웨어로 사용하면
+해당 파일을 백엔드에서 받아서 저장하고 그 경로를 DB에 저장하는 것 
+
+-- 11:04
+상품 등록 중에 16th 문제 발생
+string violation: img cannot be an array or an object
+
+-- question
+업로드를 위해 선택한 파일의 미리보기 기능에도 multer를 사용하는 게 좋나 => 놉 
+
+그런데 formData를 사용해야 하는 이유... => 파일을 담으려면 필요...
+
+날짜 및 시간을 DB에 어떤 형태로 저장해야 하나 => DATE 객체로 저장하고 DATE 함수를 사용해서 꺼내오면 됨!
+
+-- 12:38
+이미지 파일과 DATE 객체를 DB에 저장하고 꺼내오는 것부터 해보자.
+multer 사용법...
+
+그리고 상품 등록 시 미들웨어는 사용하지 않는 방향으로 코드 수정하자.
+
+formData를 사용하지 않으면 multer에서 req.file로 캐치하지 못하나 본데...
+
+-- 15:00
+17th 문제 현상 발견
+
+상품 등록 시 axios 통신 후 input의 값은 남아있으나 업로드한 이미지의 미리보기 태그가 사라짐
+current 값도 1번은 남아있는데 등록하기 버튼을 2번 클릭하면 값이 초기화됨
+
+그리고 갑자기숫자 타입의 input 태그에 문자 입력이 가능해짐
+
+일단 multer를 사용해서 이미지 저장부터 하자...
+
+multer로 업로드 이미지 파일 저장 시 한글 파일명의 인코딩에 대한 18th 문제 발생
+
+-- 18:13
+다른 방식으로 16th 문제 해결
+아마도 객체를 DB에 저장하려고 하다 보니 그런 듯...
+
+-- 17th 문제 해결 못 함
+근데 교수님이 오시고 갑자기 잘 됨...
+하 진짜... 이런 호랑말꾸 같은!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+아무래도 리렌더링이 아닌 어떠한 알 수 없는 원인으로 인해 새로고침이 이뤄졌던 듯?
+
+그리고 몇 시간 내내 안 되던 file 객체의 name 키 값이 갑자기 잘 가져와짐
+
+이러한 모든 현상이 교수님이 오시고 한참은 동일하게 안 되다가
+어느 순간 갑자기 모든 게 해결되었음...
+왜일까...
+왜...
+
+이런 숨바꼭질 같은...
+이런 multer...
+
+-- question
+DB에 저장한 업로드 이미지 파일을 가져와서 이미지 태그로 보여주는 방법 => 배포 후 가능
+
+DB에 저장할 이미지 경로 => 서버 실행 하는 작업 경로의 뒤에부터의 주소를 저장
+
+-- 18th 문제 해결
+file.originalname => Buffer.from(file.originalname, "latin1").toString("utf8");
+
+-- 19:04
+DB에 저장할 이미지 경로 수정하기
+
+-- 21:38
+DB에 저장할 이미지 경로 수정 완료
+
+formData() 객체를 사용하지 않으면 req.file 값이 undefined이며 파일이 저장되지 않음
+따라서 파일 저장 시에는 formData() 객체가 반드시 필요!
+
+-- question
+그런데 상품 등록 시 상품 이름이 기등록되어 있는 지 확인하고 나서 업로드 이미지 파일을 저장해야 하는데
+multer 미들웨어를 어떻게 컨트롤해야 하지?
+
+-- 20:07
+상품 상세 페이지를 이제 시작해보자.
+
+그 전에 상품 등록 시에는 redux가 사용되지 않으니
+액션 함수도 사용하지 않는 방향으로 코드를 수정해보자.
+
+-- 20:35
+상품 등록을 위해 axios 통신하는 함수로 코드 수정 완료
+
+이제 DB에 저장된 상품 정보를 리스트로 가져와보자.
+
+-- 20:57
+프로젝트 볼륨을 최대한 작게 줄이자.
+애초에 현재 판매 중인 상품의 수가 많지 않음을 전제로 해서
+상품 리스트 페이지에 하나의 상품씩만 슬라이드로 보여주게 만들자.
+이전 다음 버튼만 만들 것이야...
+
+아니면 상품 리스트 페이지 없이 상품 상세 페이지만 만들어 놓고
+이전 다음 버튼으로 페이지가 바뀔 수 있게 할까...
+
+-- 21:22
+상품 상세 페이지 구성 중 19th 문제 발생
+React Hook "useState" cannot be called at the top level. React Hooks must be called in a React function component or a custom React Hook function.
+
+-- 해결
+문법 => useState 및 useSelector 선언은 컴포넌트 함수 밖이 아닌 안에서
