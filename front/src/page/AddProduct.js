@@ -1,14 +1,14 @@
 import { FlexDiv, Title, AddProductImg } from "../styledComponent";
+import { addProduct_action } from "../redux/middleware";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { DatePicker } from "../component";
-import axios from "axios";
 //
 const AddProduct = () => {
   //
   const dispatch = useDispatch();
-  const product = useRef([]);
-  product.current = {};
+  const newProduct = useRef([]);
+  newProduct.current = {};
   //
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(startDate);
@@ -29,7 +29,7 @@ const AddProduct = () => {
     <FlexDiv>
       <Title>상품 등록</Title>
       <label>상품명 </label>
-      <input ref={(el) => (product.current.name = el)} />
+      <input ref={(el) => (newProduct.current.name = el)} />
       <br />
       <label>상품 이미지 </label>
       <input onChange={(e) => setImg(e.target.files[0])} type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} />
@@ -37,16 +37,16 @@ const AddProduct = () => {
       <AddProductImg src={img ? URL.createObjectURL(img) : <></>} alt="" />
       <br />
       <label>상품 설명 </label>
-      <input ref={(el) => (product.current.content = el)} />
+      <input ref={(el) => (newProduct.current.content = el)} />
       <br />
       <label>재고 수량 </label>
-      <input ref={(el) => (product.current.stock_count = el)} type="number" min={"0"} />
+      <input ref={(el) => (newProduct.current.stock_count = el)} type="number" min={"0"} />
       <br />
       <label>즉시 구매가 </label>
-      <input ref={(el) => (product.current.price = el)} type="number" step={"1000"} min={"0"} />
+      <input ref={(el) => (newProduct.current.price = el)} type="number" step={"1000"} min={"0"} />
       <br />
       <label>공동 구매가 </label>
-      <input ref={(el) => (product.current.discount_price = el)} type="number" step={"1000"} min={"0"} />
+      <input ref={(el) => (newProduct.current.discount_price = el)} type="number" step={"1000"} min={"0"} />
       <br />
       <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} />
       <br />
@@ -56,14 +56,12 @@ const AddProduct = () => {
   );
   function addProductBtn() {
     //
-    console.log(product.current);
-    //
     let isNull = false;
     //
     // ㅜ isNull 유효성 체크
-    for (const key in product.current) {
+    for (const key in newProduct.current) {
       //
-      if (product.current[key].value === "") {
+      if (newProduct.current[key].value === "") {
         //
         isNull = true;
         break;
@@ -83,9 +81,9 @@ const AddProduct = () => {
     //
     const formData = new FormData();
     //
-    for (const key in product.current) {
+    for (const key in newProduct.current) {
       //
-      formData.append(key, product.current[key].value);
+      formData.append(key, newProduct.current[key].value);
     }
     formData.append("img_path", "/tmp/uploads/" + img.name);
     formData.append("start_date", startDate.toString());
@@ -93,23 +91,7 @@ const AddProduct = () => {
     formData.append("img", img);
     URL.revokeObjectURL(img);
     //
-    console.log(typeof formData);
-    addProduct(formData);
-  }
-  /////////////////////////////////////////////////////////////////
-  /**
-   * 입력한 상품 정보를 DB에 저장하기 위해 axios 통신하는 함수 10.13.20
-   * @param {object} formData
-   */
-  async function addProduct(formData) {
-    //
-    const _addProduct = await axios({
-      //
-      url: "http://localhost:8000/addProduct/new",
-      method: "post",
-      data: formData,
-    });
-    alert(_addProduct.data);
+    dispatch(addProduct_action(formData));
   }
 };
 export default AddProduct;

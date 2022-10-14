@@ -489,3 +489,107 @@ You can either move it inside src/, or add a symlink to it from project's node_m
 <img src={require("../../../back" + product.img_path)} alt="이미지" />
 
 어쩔 수 없이 임시 이미지 파일이라도 올려 놓자...
+
+-- 10:05
+깃허브에 올린 파일 커밋 기록에서조차 삭제하는 방법
+
+git filter-branch -f --index-filter "git rm --cached --ignore-unmatch 경로를 포함한 파일명" --prune-empty -- --all
+git push --force --all
+
+-- 11:31
+작업 일지 작성 완료
+작업 시작
+
+오늘은 상세 페이지 구성만 해도 감지덕지야...
+
+-- 12:12
+DB에 저장된 상품 정보를 가져와서 보여주려고 하는데 21th 문제 발생
+또 또 객체의 키 값에 접근이 안 됨...
+
+-- 해결
+파일 정리하면서 reducer 코드가 누락됨...
+
+상품 등록 시 상품 이름의 중복 여부를 먼저 확인하는 미들웨어를 추가하는 과정에서 22th 문제 발생
+계속해서 req.body 값이 빈 객체...
+
+-- 해결
+아무래도 formData() 객체를 사용할 경우
+무조건 multer 모듈을 사용하지 않으면
+req.body 값을 잡지 못하는 듯...
+
+multer 공식 문서 깃허브에서
+filefilter() 함수와 에러 핸들링 부분을 토대로 해서 멋드러지게 해결함!!!!
+
+쿼리문에서 23th 문제 발생
+Support for `{where: 'raw query'}` has been removed.
+
+-- 해결
+문법 => { where: name } => { where: { name } }
+
+-- 15:35
+그런데... 잠시 임시로 작성했다가 삭제한 setInterval() 함수가 왜 계속해서 작동하는 거죠...
+아무리 서버를 껏다 다시 켜도 멈추지 않는 24th 문제 발생
+
+-- 해결
+dispatch() 함수와 useSelector() 함수가 계속해서 실행되기 때문...
+useEffect() 함수 안에 가둬서 처음 한 번만 실행되게 하면 ok!
+
+-- 15:57
+redux에 상품 정보를 언제 어떻게 담을 것인가...
+
+아무래도 쇼핑몰의 규모가 작고 상품의 수가 적으니
+페이지 접속 시에
+
+DB에 등록된 모든 상품의 정보를 가져와서
+redux에 저장해놓고
+
+상품을 추가하거나 삭제할 때마다
+DB와 redux 값을 수정하는 게 좋겠군~
+
+프론트의 redux 기준의 작업 순서
+1. 리듀서 파일에 어떤 액션들을 던질 것인지를 먼저 기재해놓고 (스토어의 메뉴판 작성 단계)
+2. 미들웨어 폴더의 액션 파일에 각 액션명에 대한 액션 함수를 작성하고 (각 메뉴의 레시피 작성 단계)
+3. 백엔드 파일에서 각 axios의 요청 주소에 해당하는 라우터를 작성하고 (레시피에 따른 재료 손질 단계)
+4. 이제 각 컴포넌트 파일에서 필요한 미들웨어 함수를 가져오면 끝! (메뉴 주문 시 서비스 제공 단계)
+
+로딩 페이지 작업 중 25th 문제 발생
+Objects are not valid as a React child (found: object with keys {page}). If you meant to render a collection of children, use an array instead.
+
+-- 해결 => 문법 =>
+function LoadingRedirect({ page }) {
+    //
+    return isComplete ? { page } : <Loading />;
+  }
+
+=>
+function LoadingRedirect({ page }) {
+    //
+    return isComplete ? page : <Loading />;
+  }
+
+-- 18:12
+처음 접속 시
+일단 로딩 페이지를 보여주고
+DB에서 모든 상품 정보를 가져와서 redux에 다 저장하고 나면
+제대로 된 페이지를 보여준다!
+
+-- question
+1) useEffect는 렌더링 다음에 실행되는 것...!!!!!!
+
+2) dispatch() 함수는 반환 값이 없기 때문에 then() 함수를 사용할 수 없다... 말이 안 되는 거라고...
+
+3) 백엔드에서 미들웨어 함수의 역할은
+next() 함수로 다음 단계를 연결해주거나 res.send로 응답을 종료하거나
+
+-- 18:53
+이제 해야될 건
+
+redux에서 상품 정보를 하나씩 가져와서
+각각의 상세 페이지 뼈대 구현
+
+-- 19:21
+DB에서 가져온 상품 정보의 첫 번째 id 번호를 redux에서 가져오려고 하는 과정에서 26th 문제 발생
+Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+
+-- 해결
+리듀서 파일에서 전달하지도 않은 payload 값으로 데이터를 변경하니 undefined 값이 되어버린 듯...

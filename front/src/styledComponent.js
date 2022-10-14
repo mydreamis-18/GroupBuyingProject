@@ -18,5 +18,11 @@ const Title = styled.p`
 const AddProductImg = styled.img`
   width: 10vw;
 `;
+const LoadingMsg = styled.p`
+  text-align: center;
+  font-weight: 900;
+  margin-top: 40vh;
+  font-size: 10vh;
+`;
 //
-export { FlexDiv, Title, AddProductImg };
+export { FlexDiv, Title, AddProductImg, LoadingMsg };

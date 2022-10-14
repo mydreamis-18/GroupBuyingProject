@@ -1,4 +1,5 @@
-import Product from "./Product";
+import GetProduct from "./GetProduct";
 import AddProduct from "./AddProduct";
+import Loading from "./Loading";
 //
-export { Product, AddProduct };
+export { GetProduct, AddProduct, Loading };
