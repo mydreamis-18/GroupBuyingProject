@@ -471,3 +471,21 @@ React Hook "useState" cannot be called at the top level. React Hooks must be cal
 
 -- 해결
 문법 => useState 및 useSelector 선언은 컴포넌트 함수 밖이 아닌 안에서
+
+-- [ 22.10.14 ]
+
+-- 09:17
+어젯밤에 DB가 아닌 백엔드에서라도 이미지 파일을 가져와보려고 했으나 20th 문제 발생
+<img src={require("../../../back/tmp/uploads/김세정 배우님_1.jpg")} alt="이미지" />
+
+Uncaught Error: Cannot find module '../../../back/tmp/uploads/김세정 배우님_1.jpg'
+Module not found: Error: You attempted to import ../../../back/tmp/uploads/김세정 배우님_1.jpg which falls outside of the project src/ directory. Relative imports outside of src/ are not supported.
+You can either move it inside src/, or add a symlink to it from project's node_modules/.
+
+-- 해결 못 함
+아무래도 백엔드에 파일 접근은 어려운가 봄...
+
+심지어 이렇게 기재하면 터미널에 어마무시한 양의 에러가 발생함
+<img src={require("../../../back" + product.img_path)} alt="이미지" />
+
+어쩔 수 없이 임시 이미지 파일이라도 올려 놓자...

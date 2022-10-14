@@ -1,6 +1,8 @@
 const init = {
   //
   currentProductId: "",
+  defaultImg: true,
+  product: {},
 };
 function reducer(state = init, action) {
   //
