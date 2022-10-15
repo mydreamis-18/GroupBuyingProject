@@ -1,18 +1,17 @@
 const init = {
   //
   products: new Array(0),
-  productsCurrentIdx: "",
   isDefaultImg: true,
   productsLength: 0,
+  productsIdx: 0,
 };
 function reducer(state = init, action) {
   //
   const { type, payload } = action;
-  const { products } = state;
   switch (type) {
     //
     case "GET_ALL_PRODUCTS":
-      return { ...state, products: payload };
+      return { ...state, products: payload, productsLength: payload.length };
     //
     case "ADD_PRODUCT":
       return { ...state, products: payload };
@@ -21,26 +20,26 @@ function reducer(state = init, action) {
       return { ...state, products: payload };
     //
     case "GET_PRODUCTS_LENGTH":
-      const productsLength = products.length;
+      const productsLength = state.products.length;
       return { ...state, productsLength };
     //
-    case "PLUS_PRODUCTS_CURRENT_IDX":
+    case "PLUS_PRODUCTS_IDX":
       //
-      let plus = products.productsCurrentIdx++;
+      let plus = state.productsIdx + 1;
       //
-      const isLast = plus >= products.productsLength;
+      const isLast = plus >= state.productsLength;
       if (isLast) plus = 0;
       //
-      return { ...state, productsCurrentIdx: plus };
+      return { ...state, productsIdx: plus };
     //
-    case "MINUS_PRODUCTS_CURRENT_IDX":
+    case "MINUS_PRODUCTS_IDX":
       //
-      let minus = products.productsCurrentIdx--;
+      let minus = state.productsIdx - 1;
       //
       const isFirst = minus < 0;
       if (isFirst) minus = state.productsLength - 1;
       //
-      return { ...state, productsCurrentIdx: minus };
+      return { ...state, productsIdx: minus };
     //
     case "":
       return { ...state, products: payload };
