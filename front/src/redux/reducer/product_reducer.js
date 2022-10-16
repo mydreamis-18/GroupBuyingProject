@@ -1,6 +1,7 @@
 const init = {
   //
   products: new Array(0),
+  isDoneLoading: false,
   isDefaultImg: true,
   productsLength: 0,
   productsIdx: 0,
@@ -11,7 +12,7 @@ function reducer(state = init, action) {
   switch (type) {
     //
     case "GET_ALL_PRODUCTS":
-      return { ...state, products: payload, productsLength: payload.length };
+      return { ...state, products: payload, productsLength: payload.length, isDoneLoading: true };
     //
     case "ADD_PRODUCT":
       return { ...state, products: payload };

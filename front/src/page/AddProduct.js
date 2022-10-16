@@ -43,10 +43,10 @@ const AddProduct = () => {
       <input ref={(el) => (newProduct.current.stock_count = el)} type="number" min={"0"} />
       <br />
       <label>즉시 구매가 </label>
-      <input ref={(el) => (newProduct.current.price = el)} type="number" step={"1000"} min={"0"} />
+      <input ref={(el) => (newProduct.current.price = el)} onChange={() => autoDiscountRate("price")} type="number" step={"1000"} min={"0"} />
       <br />
       <label>공동 구매가 </label>
-      <input ref={(el) => (newProduct.current.discount_price = el)} onChange={(e) => autoDiscountRate(e.target.value)} type="number" step={"1000"} min={"0"} />
+      <input ref={(el) => (newProduct.current.discount_price = el)} onChange={() => autoDiscountRate("discount_price")} type="number" step={"1000"} min={"0"} />
       <br />
       <label>공동 구매 할인율 (%) </label>
       <input ref={(el) => (newProduct.current.discount_rate = el)} type="number" step={"10"} min={"0"} />
@@ -57,17 +57,42 @@ const AddProduct = () => {
       <br />
     </FlexDiv>
   );
-  function autoDiscountRate(value) {
+  function autoDiscountRate(str) {
     //
-    const price = Number(newProduct.current.price.value);
-    if (price === 0) {
-      //
-      newProduct.current.discount_price.value = "";
-      alert("즉시 구매가를 먼저 입력해주세요");
-      return;
+    const discountPrice = newProduct.current.discount_price.value;
+    const price = newProduct.current.price.value;
+    const _discountPrice = Number(discountPrice);
+    const _price = Number(price);
+    //
+    if (str === "price") {
+
     }
-    const discountPrice = Number(value);
-    newProduct.current.discount_rate.value = parseInt((price - discountPrice) / price * 100);
+    //
+    else if (str === "discount_price") {
+      //
+      if (price === "") {
+        //
+        newProduct.current.discount_price.value = "";
+        alert("즉시 구매가를 먼저 입력해주세요");
+        return;
+      }
+      if (price === "0") {
+        //
+        newProduct.current.discount_rate.value = 100;
+        newProduct.current.discount_price.value = 0;
+        return;
+      }
+      if (_price < _discountPrice) {
+        //
+        alert("공동 구매가가 즉시 구매가보다 클 수 없습니다.");
+        newProduct.current.discount_price.value = "";
+        newProduct.current.discount_rate.value = "";
+        return;
+      }
+    }
+    //
+    //
+    newProduct.current.discount_rate.value = parseInt((_price - _discountPrice) / _price * 100);
   }
   function addProductBtn() {
     //

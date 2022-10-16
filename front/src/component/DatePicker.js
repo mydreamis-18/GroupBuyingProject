@@ -44,7 +44,10 @@ const _DatePicker = (props) => {
         setStartDate(now);
       }
       //
-      else setEndDate(now);
+      else if (str === "end") {
+        //
+        setEndDate(now);
+      }
       return;
     }
     if (str === "start") {
@@ -57,7 +60,10 @@ const _DatePicker = (props) => {
       }
     }
     //
-    else setEndDate(selectedTime);
+    else if (str === "end") {
+      //
+      setEndDate(selectedTime);
+    }
   }
   function changeToDefaultSeconds(_date) {
     //
