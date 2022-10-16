@@ -31,6 +31,10 @@ class Product extends Sequelize.Model {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
+        discount_rate: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+        },
         start_date: {
           type: Sequelize.STRING,
           allowNull: false,

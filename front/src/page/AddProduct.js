@@ -46,7 +46,10 @@ const AddProduct = () => {
       <input ref={(el) => (newProduct.current.price = el)} type="number" step={"1000"} min={"0"} />
       <br />
       <label>공동 구매가 </label>
-      <input ref={(el) => (newProduct.current.discount_price = el)} type="number" step={"1000"} min={"0"} />
+      <input ref={(el) => (newProduct.current.discount_price = el)} onChange={(e) => autoDiscountRate(e.target.value)} type="number" step={"1000"} min={"0"} />
+      <br />
+      <label>공동 구매 할인율 (%) </label>
+      <input ref={(el) => (newProduct.current.discount_rate = el)} type="number" step={"10"} min={"0"} />
       <br />
       <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} />
       <br />
@@ -54,6 +57,18 @@ const AddProduct = () => {
       <br />
     </FlexDiv>
   );
+  function autoDiscountRate(value) {
+    //
+    const price = Number(newProduct.current.price.value);
+    if (price === 0) {
+      //
+      newProduct.current.discount_price.value = "";
+      alert("즉시 구매가를 먼저 입력해주세요");
+      return;
+    }
+    const discountPrice = Number(value);
+    newProduct.current.discount_rate.value = parseInt((price - discountPrice) / price * 100);
+  }
   function addProductBtn() {
     //
     let isNull = false;
