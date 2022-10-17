@@ -1,5 +1,5 @@
+import { EditProduct, AddProduct, GetProduct, Loading } from "./page";
 import { getAllProducts_action } from "./redux/middleware";
-import { AddProduct, GetProduct, Loading } from "./page";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 //
@@ -9,7 +9,7 @@ function App() {
   //
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product_reducer.products);
-  const isDoneLoading = useSelector(state => state.product_reducer.isDoneLoading)
+  const isDoneLoading = useSelector((state) => state.product_reducer.isDoneLoading);
   //
   if (!isDoneLoading) {
     //
@@ -25,8 +25,9 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<LoadingRedirect page={<GetProduct />} />} />
+        <Route path="/" element={<EditProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
+        <Route path="/get" element={<LoadingRedirect page={<GetProduct />} />} />
       </Routes>
     </div>
   );

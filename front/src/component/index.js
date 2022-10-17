@@ -1,3 +1,4 @@
+import InputProduct from "./InputProduct";
 import DatePicker from "./DatePicker";
 //
-export { DatePicker };
+export { DatePicker, InputProduct };

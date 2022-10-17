@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 //
 const GetProduct = () => {
   //
@@ -9,57 +9,110 @@ const GetProduct = () => {
   const isDefaultImg = useSelector((state) => state.product_reducer.isDefaultImg);
   //
   const product = products[productsIdx];
-  console.log(new Date(product.start_date));
-  function getDDay() {
+  const [DDay, setDDay] = useState(product === undefined ? "" : getDDayFn);
+  //
+  if (product !== undefined) {
     //
-    const timeInterval = new Date(product.start_date) - new Date();
+    setTimeout(() => {
+      //
+      setDDay(getDDayFn);
+    }, 1000);
+  }
+  return (
+    <div style={{ border: "1px solid black", margin: "10vw" }}>
+      {product === undefined ? (
+        <p>등록된 상품이 없습니다.</p>
+      ) : (
+        <>
+          {isDefaultImg ? <img src={require("../img/defaultImg.PNG")} alt="" /> : <img src={product.img_path} alt="이미지" />}
+          <p>상품명: {product.name}</p>
+          <br />
+          <p>상품 설명: {product.content}</p>
+          <br />
+          <p>{DDay}</p>
+          <br />
+          <p>즉시 구매가: {product.price}원</p>
+          <br />
+          <p>공동 구매가: {product.discount_price}원</p>
+          <br />
+          <p>잔여 수량: {product.stock_count}</p>
+          <br />
+          <button onClick={prevProductFn}>이전 상품</button>
+          <br />
+          <br />
+          <button onClick={nextProductFn}>다음 상품</button>
+        </>
+      )}
+    </div>
+  );
+  function getDDayFn() {
     //
-    const isFuture = timeInterval > 0;
-    if (isFuture)
+    const isFuture = new Date(product.start_date) - new Date() > 0;
+    if (isFuture) {
       return (
         <>
           곧 공동 구매가 시작됩니다.
           <br />
-          시작 시간: {product.start_date.replace(" GMT+0900 (한국 표준시)", "")}
+          {dateToStringFn(product.start_date)} 시작
         </>
       );
-    const isPast = timeInterval < 0;
-    if (isPast) return `공동 구매가 종료되었습니다.\n${product.end_date}`;
+    }
+    const isPast = new Date(product.end_date) - new Date() < 0;
+    if (isPast) {
+      return (
+        <>
+          공동 구매가 종료되었습니다.
+          <br />
+          {dateToStringFn(product.end_date)} 종료
+        </>
+      );
+    }
+    const timeInterval = new Date(product.end_date) - new Date();
     //
-    const hours = Math.floor(timeInterval / 1000 / 60 / 60);
-    const minutes = Math.floor(timeInterval / 1000 / 60);
-    const seconds = Math.floor(timeInterval / 1000);
-    return `종료 시간: ${hours}:${minutes}:${seconds}`;
+    let seconds = Math.floor((timeInterval / 1000) % 60);
+    let days = Math.floor(timeInterval / 1000 / 60 / 60 / 24);
+    let minutes = Math.floor((timeInterval / 1000 / 60) % 60);
+    let hours = Math.floor((timeInterval / 1000 / 60 / 60) % 24);
+    //
+    days = toTwoDigitNumber(days);
+    hours = toTwoDigitNumber(hours);
+    minutes = toTwoDigitNumber(minutes);
+    seconds = toTwoDigitNumber(seconds);
+    //
+    return `공동 구매 종료까지 ${days}일 ${hours}:${minutes}:${seconds} 남음`;
   }
-  //
-  return (
-    <div style={{ border: "1px solid black", margin: "10vw" }}>
-      {isDefaultImg ? <img src={require("../img/defaultImg.PNG")} alt="" /> : <img src={product.img_path} alt="이미지" />}
-      <p>상품명: {product.name}</p>
-      <br />
-      <p>상품 설명: {product.content}</p>
-      <br />
-      <p>{getDDay()}</p>
-      <br />
-      <p>즉시 구매가: {product.price}</p>
-      <br />
-      <p>공동 구매가: {product.discount_price}</p>
-      <br />
-      <p>잔여 수량: {product.stock_count}</p>
-      <br />
-      <button onClick={prevProductBtn}>이전 상품</button>
-      <br />
-      <br />
-      <button onClick={nextProductBtn}>다음 상품</button>
-    </div>
-  );
-  function prevProductBtn() {
+  function prevProductFn() {
     //
     dispatch({ type: "MINUS_PRODUCTS_IDX" });
   }
-  function nextProductBtn() {
+  function nextProductFn() {
     //
     dispatch({ type: "PLUS_PRODUCTS_IDX" });
+  }
+  function dateToStringFn(_date) {
+    //
+    if (typeof _date === "string") {
+      //
+      _date = new Date(_date);
+    }
+    const day = _date.getDay();
+    const year = _date.getFullYear();
+    const date = toTwoDigitNumber(_date.getDate());
+    const hour = toTwoDigitNumber(_date.getHours());
+    const minute = toTwoDigitNumber(_date.getMinutes());
+    const month = toTwoDigitNumber(_date.getMonth() + 1);
+    const days = ["일", "월", "화", "수", "목", "금", "토"];
+    //
+    return `${year}년 ${month}월 ${date}일 ${days[day]}요일 ${hour}시 ${minute}분`;
+  }
+  function toTwoDigitNumber(number) {
+    //
+    const isTwoDigitNumber = number >= 10;
+    if (isTwoDigitNumber) {
+      //
+      return number;
+    }
+    return "0" + number;
   }
 };
 export default GetProduct;
