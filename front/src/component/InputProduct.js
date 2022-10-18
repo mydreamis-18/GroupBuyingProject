@@ -1,21 +1,26 @@
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { FlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { DatePicker } from "../component";
 //
 const InputProduct = (props) => {
   //
-  const { pageName } = props;
-  const newProduct = useRef({});
+  const { products, productsIdx, isDefaultImg } = useSelector(
+    (state) => ({
+      products: state.product_reducer.products,
+      productsIdx: state.product_reducer.productsIdx,
+      isDefaultImg: state.product_reducer.isDefaultImg,
+    }),
+    shallowEqual
+  );
+  const [isNewImg, setIsNewImg] = useState(false);
+  const [isAlert, setIsAlert] = useState(false);
+  const product = products[productsIdx];
   const dispatch = useDispatch();
-  //
-  const productsIdx = useSelector((state) => {
-    console.log("E");
-    return state.product_reducer.productsIdx;
-  });
-  const products = useSelector((state) => state.product_reducer.products);
+  const newProduct = useRef({});
+  const { pageName } = props;
   //
   // ㅜ 부모 컴포넌트의 등록 및 수정하기 버튼 클릭 시 DB에 저장하기 위해 부모 컴포넌트의 state 값 사용
   const [startDate, setStartDate] = useState(toZeroSecondFn(new Date()));
@@ -35,35 +40,41 @@ const InputProduct = (props) => {
   //   newProduct.current = { ...newProduct.current, [name]: value };
   // };
   //
-  // ㅜ
-  console.log("1", products);
-  // //
-  // useEffect(() => {
-  //   //
-  //   console.log("2");
-  // }, []);
+  useEffect(() => {
+    //
+    // ㅜ 상품 정보 수정 페이지용
+    if (pageName === "edit" && products.length !== 0) {
+      //
+      for (const key in newProduct.current) {
+        //
+        if (Object.hasOwnProperty.call(newProduct.current, key)) {
+          //
+          newProduct.current[key].value = product[key];
+        }
+      }
+      setEndDate(new Date(product.end_date));
+      setStartDate(new Date(product.start_date));
+      //
+      if (!isDefaultImg) {
+        //
+        setImg("서버 주소" + product.img_path);
+      }
+    }
+  }, [products]);
   //
-  // useEffect(() => {
-  //   //
-  //   // console.log("3", products);
-  //   //
-  //   // ㅜ 상품 정보 수정 페이지용
-  //   if (pageName === "edit" && products.length !== 0) {
-  //     //
-  //     const product = products[productsIdx];
-  //     //
-  //     for (const key in newProduct.current) {
-  //       //
-  //       if (Object.hasOwnProperty.call(newProduct.current, key)) {
-  //         //
-  //         newProduct.current[key].value = product[key];
-  //       }
-  //     }
-  //     // console.log(newProduct.current.img);
-  //     setEndDate(new Date(product.end_date));
-  //     setStartDate(new Date(product.start_date));
-  //   }
-  // }, [products]);
+  function imgChangeFn(file) {
+    //
+    if (file === undefined) {
+      //
+      setIsNewImg(false);
+    }
+    //
+    else if (!isNewImg) {
+      //
+      setIsNewImg(true);
+    }
+    setImg(file);
+  }
   //
   // ㅜ location.pathname 현재 경로
   const location = useLocation();
@@ -78,9 +89,9 @@ const InputProduct = (props) => {
       <input name="content" ref={(el) => (newProduct.current.content = el)} />
       <br />
       <label>상품 이미지 </label>
-      <input name="img" type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} onChange={(e) => setImg(e.target.files[0])} />
+      <input name="img" type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} onChange={(e) => imgChangeFn(e.target.files[0])} />
       <br />
-      <AddProductImg src={img ? URL.createObjectURL(img) : <></>} alt="" />
+      <AddProductImg src={isNewImg ? URL.createObjectURL(img) : isDefaultImg ? require("../img/default.PNG") : img} alt="" />
       <br />
       <label>재고 수량 </label>
       <input name="stock_count" type="number" min={"0"} ref={(el) => (newProduct.current.stock_count = el)} />
@@ -118,7 +129,6 @@ const InputProduct = (props) => {
     const priceCheck = Number(discountPrice) > Number(price);
     if (priceCheck) {
       //
-      console.log(e);
       alert("공동 구매가는 즉시 구매가보다 할인된 가격이어야 합니다.");
       newProduct.current.discount_price.value = price;
       newProduct.current.discount_rate.value = 0;
@@ -127,10 +137,15 @@ const InputProduct = (props) => {
     const isZero = price === "0" && (discountPrice === "0" || discountRate === "0");
     if (isZero) {
       //
-      console.log(e);
       newProduct.current.discount_price.value = 0;
       newProduct.current.discount_rate.value = 0;
-      alert("무료 상품으로 설정하셨습니다.");
+      setIsAlert(false);
+      //
+      if (isAlert === false) {
+        //
+        alert("무료 상품으로 설정되었습니다.");
+        setIsAlert(true);
+      }
       return;
     }
     if (e.target.value === "") {

@@ -777,19 +777,103 @@ alert 무한 반복의 35th 문제 발생
 -- 11:34
 상품 등록 및 수정 컴포넌트의 state 값의 초기화는 필요 없는 듯
 
-useSelector() 함수보다 useEffect() 함수가 먼저 종료되는 듯...?
-
 공동 구매 시작 시각 및 종료 시각의 state 값 사용에 대하여
 부모 컴포넌트의 state 값을 사용하는 이유는
 부모 컴포넌트의 등록 및 수정하기 버튼 클릭 시 DB에 저장하기 위해
 
 -- question
-1) useSelector() 함수의 반환 값이 처음엔 undefined인 이유
-useSelector() 함수가 여러 번 실행되는 이유
+1) useSelector() 함수의 반환 값이 처음엔 undefined인 이유...
 
-useSelector() => return() => useEffect() => ???
+useSelector() 함수가 여러 번 실행되는 이유...
 
-2) 무한 alert의 해결 방법
+=> 함수형 컴포넌트 내에 스코프 실행 => 랜더링 => useSelector(), useEffect() => 함수형 컴포넌트 내에 스코프 재실행 (리랜더링)
+
+그래서 && 필요...
+
+2) 상품 등록 시 공동 구매 할인율의 자동 입력 과정에서의 무한 alert 해결 방법
+
+=> state 값을 이용해서 if 조건으로 alert 생성
 
 3) 상품 정보 수정 페이지에서 파일 선택법...
 
+우선 input 태그에 파일을 넣으려면
+이미지를 파일 형태로 바꿔야 하는데 굉장히 복잡하며...
+
+무엇보다 로컬에 파일이 저장되어 있어야 하기 때문에
+서버에서 로컬로 파일을 다운로드 한 다음에
+input 태그에 담아야 함
+
+그러므로 기존의 이미지는 보여주는 용도로만 사용하고
+input 태그는 변경할 경우에 선택할 수 있도록 하는 것이 올바른 방향
+
+4) 로딩 페이지
+
+action 함수 내에서
+로딩에 대한 redux의 state 값을 변경하는 액션을 담은 dispatch를 추가적으로 실행한다.
+
+로딩창
+app.js 파일의 헤더 부분에서 state 값에 따라 로딩 컴포넌트의 유무를 다루거나
+
+로딩 페이지
+원래 내가 했던 대로
+state 값에 따라 로딩 컴포넌트와 원래 페이지 중 하나만 다루거나
+
+-- 16:45
+35th 해결
+
+-- 17:04
+useSelector() 함수 사용의 최적화 방법
+
+1) 독립 선언
+
+2) equalityFn 파라미터 사용
+
+equalityFn 는 이전 값(prev)과 다음 값(next)을 비교하여
+true가 나오면 다시 렌더링을 하지 않고
+false가 나오면 렌더링을 진행 합니다.
+
+const { count, prevCount } = useSelector((state: RootState) => ({
+    count : state.countReducer.count,
+    prevCount: state.countReducer.prevCount,
+  }),(prev, next) => {
+    return prev.count === next.count && prev.prevCount === next.prevCount;
+  });
+
+3) shallowEqual 함수 사용
+
+shallowEqual 는 selector로 선언한 값의 최상위 값들의 비교 여부를 대신 작업해 줍니다.
+
+const { count, prevCount } = useSelector((state: RootState) => ({
+    count : state.countReducer.count,
+    prevCount: state.countReducer.prevCount,
+  }), shallowEqual);
+
+
+-- question
+1) 이미지 태그에 프론트 쪽 src 폴더의 이미지 파일을 사용하려 할 때
+require() 함수 안에 문자열 이외에는 사용이 불가한가 => Yes
+
+=> 웹팩 부분에서 터지는 거라고 함
+
+배포 후 서버에서 이미지 경로를 가져올 때는
+require 없이도 도메인 주소만 앞에 붙이면 된다고 함
+
+2) useState() 함수의 초기 값에 삼항 연산자를 사용하는 게
+과도한 리렌더링의 방지를 위해서 맞는 걸까
+아니면 별 의미가 없는 걸까...
+
+=> 과도한 리렌더링은 주의해야겠지만
+극도로 경계할 필요는 없다.
+
+또한 ustState() 함수의 초기 값으로 삼항 연산자를 쓰는 경우는 별로 없다고 한다.
+
+-- 19:00
+상품 등록 및 상세 페이지의 이미지 태그에 대하여
+파일 변경 유무에 대한 설정 완료
+
+다음 작업은 변경한 상품 정보 DB에 저장하기
+
+근데 해당하는 상품의 로우를 삭제한 다음 새로 추가하는 게 낫나
+아니면 변경한 컬럼들을 일일이 찾아서 부분 부분적으로 변경하는 게 낫나...
+
+로우 자체를 덮어쓰기는 안 되겠지?

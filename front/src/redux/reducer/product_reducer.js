@@ -5,6 +5,7 @@ const init = {
   isDefaultImg: true,
   productsLength: 0,
   productsIdx: 0,
+  temp: "temp",
 };
 function reducer(state = init, action) {
   //

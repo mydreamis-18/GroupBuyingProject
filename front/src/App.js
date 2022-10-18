@@ -1,4 +1,4 @@
-import { EditProduct, AddProduct, GetProduct, Loading } from "./page";
+import { EditProduct, AddProduct, GetProduct, Loading, Temp } from "./page";
 import { getAllProducts_action } from "./redux/middleware";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
@@ -19,11 +19,9 @@ function App() {
   else {
     console.log("[ COMPLETE ] GET_ALL_PRODUCTS", products);
   }
-  //
-  // console.log("1");
-  //
   return (
     <div className="App">
+      <div></div>
       <Routes>
         <Route path="/" element={<EditProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />

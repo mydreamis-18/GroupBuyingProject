@@ -24,7 +24,7 @@ const GetProduct = () => {
         <p>등록된 상품이 없습니다.</p>
       ) : (
         <>
-          {isDefaultImg ? <img src={require("../img/defaultImg.PNG")} alt="" /> : <img src={product.img_path} alt="이미지" />}
+          <img src={isDefaultImg ? require("../img/default.PNG") : "서버 주소" + product.img_path} alt="이미지" />
           <p>상품명: {product.name}</p>
           <br />
           <p>상품 설명: {product.content}</p>
