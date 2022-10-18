@@ -3,10 +3,10 @@ import { useState } from "react";
 //
 const GetProduct = () => {
   //
-  const dispatch = useDispatch();
-  const products = useSelector((state) => state.product_reducer.products);
-  const productsIdx = useSelector((state) => state.product_reducer.productsIdx);
   const isDefaultImg = useSelector((state) => state.product_reducer.isDefaultImg);
+  const productsIdx = useSelector((state) => state.product_reducer.productsIdx);
+  const products = useSelector((state) => state.product_reducer.products);
+  const dispatch = useDispatch();
   //
   const product = products[productsIdx];
   const [DDay, setDDay] = useState(product === undefined ? "" : getDDayFn);
@@ -19,7 +19,7 @@ const GetProduct = () => {
     }, 1000);
   }
   return (
-    <div style={{ border: "1px solid black", margin: "10vw" }}>
+    <div style={{ border: "1px solid black", margin: "10vw", padding: "2vw" }}>
       {product === undefined ? (
         <p>등록된 상품이 없습니다.</p>
       ) : (
@@ -79,7 +79,13 @@ const GetProduct = () => {
     minutes = toTwoDigitNumber(minutes);
     seconds = toTwoDigitNumber(seconds);
     //
-    return `공동 구매 종료까지 ${days}일 ${hours}:${minutes}:${seconds} 남음`;
+    return (
+      <>
+        공동 구매가 진행 중입니다.
+        <br />
+        종료까지 {days}일 {hours}:{minutes}:{seconds} 남음
+      </>
+    );
   }
   function prevProductFn() {
     //

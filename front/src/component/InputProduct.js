@@ -1,16 +1,27 @@
 import { FlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
+import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
 import { DatePicker } from "../component";
 //
 const InputProduct = (props) => {
   //
   const dispatch = useDispatch();
-  const newProduct = useRef([]);
   const { pageName } = props;
-  newProduct.current = {};
   //
+  const productsIdx = useSelector(state => state.product_reducer.productsIdx);
+  const products = useSelector(state => state.product_reducer.products);
+  const product = products[productsIdx];
+  // const {name, content, img_path, stock_count,  price, discount_price, discount_rate, start_date, end_date} = product;
+  const newProduct = useRef({});
+  //
+  if (pageName === "edit") {
+    //
+    
+  }
+  function abc() {
+    
+  }
   // ㅜ onChange = { inputsHandlerFn };
   // const inputsHandlerFn = (e) => {
   //   //
@@ -40,13 +51,13 @@ const InputProduct = (props) => {
       <label>상품명 </label>
       <input name="name" ref={(el) => (newProduct.current.name = el)} />
       <br />
+      <label>상품 설명 </label>
+      <input name="content" ref={(el) => (newProduct.current.content = el)} />
+      <br />
       <label>상품 이미지 </label>
       <input name="img" type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} onChange={(e) => setImg(e.target.files[0])} />
       <br />
       <AddProductImg src={img ? URL.createObjectURL(img) : <></>} alt="" />
-      <br />
-      <label>상품 설명 </label>
-      <input name="content" ref={(el) => (newProduct.current.content = el)} />
       <br />
       <label>재고 수량 </label>
       <input name="stock_count" type="number" min={"0"} ref={(el) => (newProduct.current.stock_count = el)} />
