@@ -1,49 +1,72 @@
 import { FlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { DatePicker } from "../component";
 //
 const InputProduct = (props) => {
   //
-  const dispatch = useDispatch();
   const { pageName } = props;
-  //
-  const productsIdx = useSelector(state => state.product_reducer.productsIdx);
-  const products = useSelector(state => state.product_reducer.products);
-  const product = products[productsIdx];
-  // const {name, content, img_path, stock_count,  price, discount_price, discount_rate, start_date, end_date} = product;
   const newProduct = useRef({});
+  const dispatch = useDispatch();
   //
-  if (pageName === "edit") {
-    //
-    
-  }
-  function abc() {
-    
-  }
-  // ㅜ onChange = { inputsHandlerFn };
-  // const inputsHandlerFn = (e) => {
-  //   //
-  //   const { name, value } = e.target;
-  //   //
-  //   setInputs({ ...inputs, [name]: value });
-  // };
+  const productsIdx = useSelector((state) => {
+    console.log("E");
+    return state.product_reducer.productsIdx;
+  });
+  const products = useSelector((state) => state.product_reducer.products);
   //
+  // ㅜ 부모 컴포넌트의 등록 및 수정하기 버튼 클릭 시 DB에 저장하기 위해 부모 컴포넌트의 state 값 사용
   const [startDate, setStartDate] = useState(toZeroSecondFn(new Date()));
   const [endDate, setEndDate] = useState(startDate);
   //
   // ㅜ 사진 선택 시 이미지 미리보기 기능을 위해 리렌더링 유도
   const [img, setImg] = useState("");
   //
-  // ㅜ state 값 초기화하기
-  useEffect(() => {
-    //
-    if (img !== "") setImg("");
-    //
-    setStartDate(toZeroSecondFn(new Date()));
-    setEndDate(startDate);
-  }, []);
+  // ㅜ undefined
+  // console.log(products);
+  //
+  // ㅜ onChange = { inputsHandlerFn };
+  // const inputsHandlerFn = (e) => {
+  //   //
+  //   const { name, value } = e.target;
+  //   //
+  //   newProduct.current = { ...newProduct.current, [name]: value };
+  // };
+  //
+  // ㅜ
+  console.log("1", products);
+  // //
+  // useEffect(() => {
+  //   //
+  //   console.log("2");
+  // }, []);
+  //
+  // useEffect(() => {
+  //   //
+  //   // console.log("3", products);
+  //   //
+  //   // ㅜ 상품 정보 수정 페이지용
+  //   if (pageName === "edit" && products.length !== 0) {
+  //     //
+  //     const product = products[productsIdx];
+  //     //
+  //     for (const key in newProduct.current) {
+  //       //
+  //       if (Object.hasOwnProperty.call(newProduct.current, key)) {
+  //         //
+  //         newProduct.current[key].value = product[key];
+  //       }
+  //     }
+  //     // console.log(newProduct.current.img);
+  //     setEndDate(new Date(product.end_date));
+  //     setStartDate(new Date(product.start_date));
+  //   }
+  // }, [products]);
+  //
+  // ㅜ location.pathname 현재 경로
+  const location = useLocation();
   //
   return (
     <FlexDiv>
@@ -63,21 +86,22 @@ const InputProduct = (props) => {
       <input name="stock_count" type="number" min={"0"} ref={(el) => (newProduct.current.stock_count = el)} />
       <br />
       <label>즉시 구매가 </label>
-      <input name="price" type="number" step={"1000"} min={"0"} ref={(el) => (newProduct.current.price = el)} onClick={(e) => autoCalculationFn(e.target)} onBlur={(e) => autoCalculationFn(e.target)} />
+      <input name="price" type="number" step={"1000"} min={"0"} ref={(el) => (newProduct.current.price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <label>공동 구매가 </label>
-      <input name="discount_price" type="number" step={"1000"} min={"0"} ref={(el) => (newProduct.current.discount_price = el)} onClick={(e) => autoCalculationFn(e.target)} onBlur={(e) => autoCalculationFn(e.target)} />
+      <input name="discount_price" type="number" step={"1000"} min={"0"} ref={(el) => (newProduct.current.discount_price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <label>공동 구매 할인율 (%) </label>
-      <input name="discount_rate" type="number" step={"10"} min={"0"} max={"100"} ref={(el) => (newProduct.current.discount_rate = el)} onClick={(e) => autoCalculationFn(e.target)} onBlur={(e) => autoCalculationFn(e.target)} />
+      <input name="discount_rate" type="number" step={"10"} min={"0"} max={"100"} ref={(el) => (newProduct.current.discount_rate = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} fn={[toZeroSecondFn]} />
       <br />
       <button onClick={pageName === "add" ? addProductFn : editProductFn}>{pageName === "add" ? "상품 등록하기" : "상품 정보 수정하기"}</button>
       <br />
+      <Link to={location.pathname + "addProduct"}>상품 등록 페이지로</Link>
     </FlexDiv>
   );
-  function autoCalculationFn(target) {
+  function autoCalculationFn(e) {
     //
     const discountPrice = newProduct.current.discount_price.value;
     const discountRate = newProduct.current.discount_rate.value;
@@ -94,6 +118,7 @@ const InputProduct = (props) => {
     const priceCheck = Number(discountPrice) > Number(price);
     if (priceCheck) {
       //
+      console.log(e);
       alert("공동 구매가는 즉시 구매가보다 할인된 가격이어야 합니다.");
       newProduct.current.discount_price.value = price;
       newProduct.current.discount_rate.value = 0;
@@ -102,14 +127,15 @@ const InputProduct = (props) => {
     const isZero = price === "0" && (discountPrice === "0" || discountRate === "0");
     if (isZero) {
       //
+      console.log(e);
       newProduct.current.discount_price.value = 0;
       newProduct.current.discount_rate.value = 0;
       alert("무료 상품으로 설정하셨습니다.");
       return;
     }
-    if (target.value === "") {
+    if (e.target.value === "") {
       //
-      switch (target.name) {
+      switch (e.target.name) {
         case "price":
           newProduct.current.discount_price.value = "";
           newProduct.current.discount_rate.value = "";
@@ -128,8 +154,8 @@ const InputProduct = (props) => {
     const _discountRate = Number(discountRate);
     const _discountPrice = Number(discountPrice);
     //
-    const isAutoDiscountPrice = target.name === "discount_rate" && price !== "";
-    const isAutoDiscountRate = (target.name === "price" && discountPrice !== "") || (target.name === "discount_price" && price !== "");
+    const isAutoDiscountPrice = e.target.name === "discount_rate" && price !== "";
+    const isAutoDiscountRate = (e.target.name === "price" && discountPrice !== "") || (e.target.name === "discount_price" && price !== "");
     //
     if (isAutoDiscountRate) {
       //
