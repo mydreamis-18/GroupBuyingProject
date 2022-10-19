@@ -1,4 +1,4 @@
-import { EditProduct, AddProduct, GetProduct, Loading, Temp } from "./page";
+import { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, Login } from "./page";
 import { getAllProducts_action } from "./redux/middleware";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
@@ -23,9 +23,11 @@ function App() {
     <div className="App">
       <div></div>
       <Routes>
-        <Route path="/" element={<EditProduct />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/signUp" element={<SignUp />} />
+        <Route path="/editProduct" element={<EditProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
-        <Route path="/get" element={<LoadingRedirect page={<GetProduct />} />} />
+        <Route path="/getProduct" element={<LoadingRedirect page={<GetProduct />} />} />
       </Routes>
     </div>
   );

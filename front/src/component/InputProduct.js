@@ -1,7 +1,6 @@
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { FlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
-import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { DatePicker } from "../component";
 //
@@ -75,10 +74,6 @@ const InputProduct = (props) => {
     }
     setImg(file);
   }
-  //
-  // ㅜ location.pathname 현재 경로
-  const location = useLocation();
-  //
   return (
     <FlexDiv>
       <Title>{pageName === "add" ? "상품 등록" : "상품 정보 수정"}</Title>
@@ -109,7 +104,6 @@ const InputProduct = (props) => {
       <br />
       <button onClick={pageName === "add" ? addProductFn : editProductFn}>{pageName === "add" ? "상품 등록하기" : "상품 정보 수정하기"}</button>
       <br />
-      <Link to={location.pathname + "addProduct"}>상품 등록 페이지로</Link>
     </FlexDiv>
   );
   function autoCalculationFn(e) {
@@ -193,10 +187,13 @@ const InputProduct = (props) => {
     // ㅜ isNull 유효성 체크
     for (const key in newProduct.current) {
       //
-      if (newProduct.current[key].value === "") {
+      if (Object.hasOwnProperty.call(newProduct.current, key)) {
         //
-        isNull = true;
-        break;
+        if (newProduct.current[key].value === "") {
+          //
+          isNull = true;
+          break;
+        }
       }
     }
     if (isNull) {
@@ -208,14 +205,20 @@ const InputProduct = (props) => {
     // ㅜ 태그가 담긴 ref 객체 그대로를 백엔드로 보내면 에러 발생함 주의
     // for (const key in product.current) {
     //   //
-    //   product.current[key] = product.current[key].value;
+    //   if (Object.hasOwnProperty.call(newProduct.current, key)) {
+    //     //
+    //     product.current[key] = product.current[key].value;
+    //   }
     // }
     //
     const formData = new FormData();
     //
     for (const key in newProduct.current) {
       //
-      formData.append(key, newProduct.current[key].value);
+      if (Object.hasOwnProperty.call(newProduct.current, key)) {
+        //
+        formData.append(key, newProduct.current[key].value);
+      }
     }
     formData.append("img_path", "/tmp/uploads/" + img.name);
     formData.append("start_date", startDate.toString());

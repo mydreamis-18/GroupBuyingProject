@@ -39,6 +39,7 @@ export const deleteProduct_action = (product_id) => {
       method: "post",
     });
     console.log(_deleteProduct_action.data);
+    //
     _dispatch({ type: "DELETE_PRODUCT", payload: _deleteProduct_action.data });
   };
 };

@@ -2,6 +2,7 @@
 // ㅜ 백엔드에서 사용한 npm 전체 모듈
 // styled-components
 // react-router-dom
+// jsonwebtoken
 // redux-thunk
 // react-redux
 // sequelize
@@ -10,6 +11,7 @@
 // dotenv
 // multer
 // redux
+// bcypt
 // axios
 // cors
 //
@@ -32,7 +34,7 @@ app.use(express.json());
 //
 ///////////////////////////
 // ㅜ 서버 실행 시 MySQL 연동
-const { sequelize, Product } = require("./model");
+const { sequelize, User, Product } = require("./model");
 sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
 ////////////////////////////////////////////////////////////
@@ -54,7 +56,92 @@ const storage = multer.diskStorage({
   },
 });
 //
+const SALT = 10;
+const dot = require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+//
+app.post("/signUp", (req, res) => {
+  //
+  let { user_id, password } = req.body;
+  //
+  User.findOne({ where: { user_id } }).then(async (obj) => {
+    //
+    if (obj === null) {
+      //
+      // ㅜ 다양한 동기적 처리 방법
+      // bcrypt.hash(password, SALT, (err, data) => {
+      //   //
+      //   password = data;
+      //   User.create({ user_id, password }).then(() => res.send("회원 가입이 완료되었습니다."));
+      // });
+      //
+      // password = bcrypt.hashSync(password, SALT);
+      //
+      password = await bcrypt.hash(password, SALT);
+      //
+      User.create({ user_id, password }).then(() => res.send("회원 가입이 완료되었습니다."));
+    }
+    //
+    else res.send("해당 ID로 가입한 회원이 있습니다.");
+  });
+});
+//
+app.post("/login", (req, res) => {
+  //
+  let { user_id, password } = req.body;
+  //
+  User.findOne({ where: { user_id } }).then(async (obj) => {
+    //
+    if (obj !== null) {
+      //
+      const _password = obj.dataValues.password;
+      //
+      const isMatch = await bcrypt.compare(password, _password);
+      if (isMatch) {
+        //
+        const { access_token, refresh_token } = issueTokenFn();
+        //
+        await User.update({ refresh_token }, { where: { user_id } }).then((obj) => console.log(obj));
+        //
+        res.send({ alert: "로그인되었습니다.", access_token, refresh_token });
+      }
+      //
+      else res.send({ alert: "비밀번호를 다시 한 번 확인해주세요." });
+    }
+    //
+    else res.send({ alert: "존재하지 않는 아이디입니다." });
+  });
+});
+//
+function issueTokenFn(user_id) {
+  //
+  // ㅜ payload,scretKey,options
+  const access_token = jwt.sign(
+    {
+      user_id,
+    },
+    process.env.ACCESS_TOKEN,
+    {
+      expiresIn: "1m",
+      issuer: "mydreamis-18",
+    }
+  );
+  const refresh_token = jwt.sign(
+    {
+      user_id,
+    },
+    process.env.REFRESH_TOKEN,
+    {
+      expiresIn: "2m",
+      issuer: "mydreamis-18",
+    }
+  );
+  return { access_token, refresh_token };
+}
+//
 ////////////////////////////////////////////////
+//    10.14.20
 // 1. DB에 같은 이름의 데이터가 있는 지 확인한 다음
 // 2. 업로드한 이미지 파일을 백엔드 폴더에 저장하고
 // 3. 나머지 formData() 객체의 데이터를 DB에 저장
