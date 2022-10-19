@@ -1,12 +1,22 @@
 import styled from "styled-components";
 //
-const FlexDiv = styled.div`
+const ColumnFlexDiv = styled.div`
   border: 1px solid black;
   justify-content: center;
   flex-direction: column;
   border-radius: 20px;
   align-items: center;
   margin: 2vw 1vw;
+  display: flex;
+  `;
+const RowFlexDiv = styled.div`
+  justify-content: space-evenly;
+  flex-direction: row;
+  border-radius: 20px;
+  align-items: center;
+  font-weight: 900;
+  margin: 2vw 1vw;
+  font-size: 4vw;
   display: flex;
 `;
 const Title = styled.p`
@@ -24,5 +34,4 @@ const LoadingMsg = styled.p`
   margin-top: 40vh;
   font-size: 10vh;
 `;
-//
-export { FlexDiv, Title, AddProductImg, LoadingMsg };
+export { ColumnFlexDiv, RowFlexDiv, Title, AddProductImg, LoadingMsg };

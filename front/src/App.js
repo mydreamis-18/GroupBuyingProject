@@ -2,6 +2,7 @@ import { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, Login } fro
 import { getAllProducts_action } from "./redux/middleware";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
+import { Header } from "./component";
 //
 // addProduct 페이지에 대해서 관리자만 접근 가능하게 설정해야 함!
 //
@@ -21,13 +22,13 @@ function App() {
   }
   return (
     <div className="App">
-      <div></div>
+      <Header/>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/editProduct" element={<EditProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
-        <Route path="/getProduct" element={<LoadingRedirect page={<GetProduct />} />} />
+        <Route path="/" element={<LoadingRedirect page={<GetProduct />} />} />
       </Routes>
     </div>
   );

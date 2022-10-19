@@ -1,4 +1,5 @@
 import InputProduct from "./InputProduct";
 import DatePicker from "./DatePicker";
+import Header from "../page/Header";
 //
-export { DatePicker, InputProduct };
+export { InputProduct, DatePicker, Header };

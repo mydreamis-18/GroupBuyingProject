@@ -1,5 +1,4 @@
-import { FlexDiv } from "../styledComponent";
-import { Link } from "react-router-dom";
+import { ColumnFlexDiv } from "../styledComponent";
 import { useRef } from "react";
 import axios from "axios";
 //
@@ -8,7 +7,7 @@ const SignUp = () => {
   const userData = useRef({});
   //
   return (
-    <FlexDiv>
+    <ColumnFlexDiv>
       <br />
       <input name="user_id" ref={(el) => (userData.current.user_id = el)} />
       <br />
@@ -16,8 +15,7 @@ const SignUp = () => {
       <br />
       <button onClick={signUp}>회원가입</button>
       <br />
-      <Link to="/">로그인 페이지로 이동</Link>
-    </FlexDiv>
+    </ColumnFlexDiv>
   );
   async function signUp() {
     //

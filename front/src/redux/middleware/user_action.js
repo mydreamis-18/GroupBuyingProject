@@ -10,9 +10,18 @@ export const login_action = (loginData) => {
       method: "post",
       data: loginData,
     });
-    console.log(_login_action.data);
-    alert(_login_action.data.alert);
+    const { access_token, refresh_token, alertMsg } = _login_action.data;
+    if (access_token !== undefined) {
+      //
+      sessionStorage.setItem("refresh_token", refresh_token);
+      sessionStorage.setItem("access_token", access_token);
+    }
+    // ㅜ 세션의 키 값 가져오기
+    // console.log(sessionStorage.key(0))
+    // console.log(sessionStorage.key(1))
+    // console.log(sessionStorage.length)
     //
     _dispatch({ type: "LOGIN" });
+    alert(alertMsg);
   };
 };

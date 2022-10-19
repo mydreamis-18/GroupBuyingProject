@@ -102,15 +102,15 @@ app.post("/login", (req, res) => {
         //
         const { access_token, refresh_token } = issueTokenFn();
         //
-        await User.update({ refresh_token }, { where: { user_id } }).then((obj) => console.log(obj));
+        await User.update({ refresh_token }, { where: { user_id } });
         //
-        res.send({ alert: "로그인되었습니다.", access_token, refresh_token });
+        res.send({ alertMsg: "로그인되었습니다.", access_token, refresh_token });
       }
       //
-      else res.send({ alert: "비밀번호를 다시 한 번 확인해주세요." });
+      else res.send({ alertMsg: "비밀번호를 다시 한 번 확인해주세요." });
     }
     //
-    else res.send({ alert: "존재하지 않는 아이디입니다." });
+    else res.send({ alertMsg: "존재하지 않는 아이디입니다." });
   });
 });
 //

@@ -1,7 +1,6 @@
 import { login_action } from "../redux/middleware";
-import { FlexDiv } from "../styledComponent";
+import { ColumnFlexDiv } from "../styledComponent";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
 import { useRef } from "react";
 //
 const Login = () => {
@@ -10,7 +9,7 @@ const Login = () => {
   const loginData = useRef({});
   //
   return (
-    <FlexDiv>
+    <ColumnFlexDiv>
       <br />
       <input name="user_id" ref={(el) => (loginData.current.user_id = el)} />
       <br />
@@ -18,8 +17,7 @@ const Login = () => {
       <br />
       <button onClick={loginFn}>로그인</button>
       <br />
-      <Link to="/signUp">회원가입 페이지로 이동</Link>
-    </FlexDiv>
+    </ColumnFlexDiv>
   );
   function loginFn() {
     //

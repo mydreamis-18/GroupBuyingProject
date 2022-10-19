@@ -1,4 +1,4 @@
-import { FlexDiv, Title, AddProductImg } from "../styledComponent";
+import { ColumnFlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
@@ -34,7 +34,7 @@ const AddProduct = () => {
   }, []);
   //
   return (
-    <FlexDiv>
+    <ColumnFlexDiv>
       <Title>상품 등록</Title>
       <label>상품명 </label>
       <input name="name" ref={(el) => (newProduct.current.name = el)} />
@@ -63,7 +63,7 @@ const AddProduct = () => {
       <br />
       <button onClick={addProductFn}>상품 등록하기</button>
       <br />
-    </FlexDiv>
+    </ColumnFlexDiv>
   );
   function autoCalculationFn(target) {
     //

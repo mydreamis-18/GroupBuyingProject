@@ -1,5 +1,5 @@
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { FlexDiv, Title, AddProductImg } from "../styledComponent";
+import { ColumnFlexDiv, Title, AddProductImg } from "../styledComponent";
 import { addProduct_action } from "../redux/middleware";
 import { useState, useEffect, useRef } from "react";
 import { DatePicker } from "../component";
@@ -75,7 +75,7 @@ const InputProduct = (props) => {
     setImg(file);
   }
   return (
-    <FlexDiv>
+    <ColumnFlexDiv>
       <Title>{pageName === "add" ? "상품 등록" : "상품 정보 수정"}</Title>
       <label>상품명 </label>
       <input name="name" ref={(el) => (newProduct.current.name = el)} />
@@ -104,7 +104,7 @@ const InputProduct = (props) => {
       <br />
       <button onClick={pageName === "add" ? addProductFn : editProductFn}>{pageName === "add" ? "상품 등록하기" : "상품 정보 수정하기"}</button>
       <br />
-    </FlexDiv>
+    </ColumnFlexDiv>
   );
   function autoCalculationFn(e) {
     //
