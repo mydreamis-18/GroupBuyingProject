@@ -33,7 +33,7 @@ const GetProduct = () => {
     //
     clearInterval(DDayInterval);
     //
-    if (setIsProduct) {
+    if (isProduct) {
       //
       const isFuture = new Date(product.start_date) - new Date() > 0;
       if (isFuture) {

@@ -15,6 +15,8 @@ export const getAllProducts_action = () => {
     // if (products.length === 0) return;
     //
     _dispatch({ type: "GET_ALL_PRODUCTS", payload: products });
+    //
+    setTimeout(() => _dispatch({type: "LOADING_DONE"}), 2000);
   };
 };
 //

@@ -35,7 +35,7 @@ app.use(express.json());
 //
 ///////////////////////////
 // ㅜ 서버 실행 시 MySQL 연동
-const { sequelize, User, Product } = require("./model");
+const { sequelize, User, Product, Transaction } = require("./model");
 sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
 ////////////////////////////////////////////////////////////

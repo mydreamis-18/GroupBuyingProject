@@ -57,6 +57,7 @@ class Product extends Sequelize.Model {
   }
   static associate(db) {
     //
+    db.Product.hasMany(db.Transaction, { foreignKey: "product_id", scourceKey: "id" })
   }
 }
 module.exports = Product;

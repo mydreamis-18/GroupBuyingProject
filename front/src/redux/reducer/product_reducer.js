@@ -15,7 +15,10 @@ function reducer(state = init, action) {
   switch (type) {
     //
     case "GET_ALL_PRODUCTS":
-      return { ...state, products: payload, productsLength: payload.length, isDoneLoading: true };
+      return { ...state, products: payload, productsLength: payload.length };
+    //
+    case "LOADING_DONE":
+      return { ...state, isDoneLoading: true };
     //
     case "ADD_PRODUCT":
       return { ...state, products: [...products, payload], productsLength: productsLength + 1 };

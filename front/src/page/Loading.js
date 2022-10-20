@@ -2,6 +2,6 @@ import { LoadingMsg } from "../styledComponent";
 //
 const Loading = () => {
   //
-  return <LoadingMsg>1S Loading...</LoadingMsg>;
+  return <LoadingMsg>상품 준비 중입니다.</LoadingMsg>;
 };
 export default Loading;
