@@ -10,7 +10,11 @@ export const getAllProducts_action = () => {
       url: "http://localhost:8000/getAllProducts",
       method: "post",
     });
-    _dispatch({ type: "GET_ALL_PRODUCTS", payload: _getAllProducts_action.data });
+    const products = _getAllProducts_action.data;
+    //
+    // if (products.length === 0) return;
+    //
+    _dispatch({ type: "GET_ALL_PRODUCTS", payload: products });
   };
 };
 //
@@ -24,9 +28,12 @@ export const addProduct_action = (formData) => {
       method: "post",
       data: formData,
     });
-    _dispatch({ type: "ADD_PRODUCTS", payload: _addProduct_action.data });
-    //
-    alert(_addProduct_action.data);
+    const { isSuccess, alertMsg, newProduct } = _addProduct_action.data;
+    if (isSuccess) {
+      //
+      _dispatch({ type: "ADD_PRODUCT", payload: newProduct });
+    }
+    alert(alertMsg);
   };
 };
 //

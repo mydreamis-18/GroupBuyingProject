@@ -1,5 +1,5 @@
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { ColumnFlexDiv, Title, AddProductImg } from "../styledComponent";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { addProduct_action } from "../redux/middleware";
 import { useState, useEffect, useRef } from "react";
 import { DatePicker } from "../component";
@@ -8,9 +8,9 @@ const InputProduct = (props) => {
   //
   const { products, productsIdx, isDefaultImg } = useSelector(
     (state) => ({
-      products: state.product_reducer.products,
-      productsIdx: state.product_reducer.productsIdx,
       isDefaultImg: state.product_reducer.isDefaultImg,
+      productsIdx: state.product_reducer.productsIdx,
+      products: state.product_reducer.products,
     }),
     shallowEqual
   );
@@ -78,10 +78,10 @@ const InputProduct = (props) => {
     <ColumnFlexDiv>
       <Title>{pageName === "add" ? "상품 등록" : "상품 정보 수정"}</Title>
       <label>상품명 </label>
-      <input name="name" ref={(el) => (newProduct.current.name = el)} />
+      <input name="name" autoComplete="false" ref={(el) => (newProduct.current.name = el)} />
       <br />
       <label>상품 설명 </label>
-      <input name="content" ref={(el) => (newProduct.current.content = el)} />
+      <input name="content" autoComplete="false" ref={(el) => (newProduct.current.content = el)} />
       <br />
       <label>상품 이미지 </label>
       <input name="img" type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} onChange={(e) => imgChangeFn(e.target.files[0])} />
@@ -89,16 +89,16 @@ const InputProduct = (props) => {
       <AddProductImg src={isNewImg ? URL.createObjectURL(img) : isDefaultImg ? require("../img/default.PNG") : img} alt="" />
       <br />
       <label>재고 수량 </label>
-      <input name="stock_count" type="number" min={"0"} ref={(el) => (newProduct.current.stock_count = el)} />
+      <input name="stock_count" type="number" min={"0"} autoComplete="false" ref={(el) => (newProduct.current.stock_count = el)} />
       <br />
       <label>즉시 구매가 </label>
-      <input name="price" type="number" step={"1000"} min={"0"} ref={(el) => (newProduct.current.price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
+      <input name="price" type="number" step={"1000"} min={"0"} autoComplete="false" ref={(el) => (newProduct.current.price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <label>공동 구매가 </label>
-      <input name="discount_price" type="number" step={"1000"} min={"0"} ref={(el) => (newProduct.current.discount_price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
+      <input name="discount_price" type="number" step={"1000"} min={"0"} autoComplete="false" ref={(el) => (newProduct.current.discount_price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <label>공동 구매 할인율 (%) </label>
-      <input name="discount_rate" type="number" step={"10"} min={"0"} max={"100"} ref={(el) => (newProduct.current.discount_rate = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
+      <input name="discount_rate" type="number" step={"10"} min={"0"} max={"100"} autoComplete="false" ref={(el) => (newProduct.current.discount_rate = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} fn={[toZeroSecondFn]} />
       <br />
@@ -160,25 +160,22 @@ const InputProduct = (props) => {
       }
     }
     const _price = Number(price);
+    let _discountPrice = Number(discountPrice);
     const _discountRate = Number(discountRate);
-    const _discountPrice = Number(discountPrice);
     //
-    const isAutoDiscountPrice = e.target.name === "discount_rate" && price !== "";
-    const isAutoDiscountRate = (e.target.name === "price" && discountPrice !== "") || (e.target.name === "discount_price" && price !== "");
-    //
-    if (isAutoDiscountRate) {
-      //
-      const autoDiscountRate = parseInt(((_price - _discountPrice) / _price) * 100);
-      //
-      newProduct.current.discount_rate.value = autoDiscountRate;
-      return;
-    }
+    const isAutoDiscountPrice = e.target.name === "discount_rate";
     if (isAutoDiscountPrice) {
       //
       const autoDiscountPrice = parseInt((_price * (100 - _discountRate)) / 100);
       //
       newProduct.current.discount_price.value = autoDiscountPrice;
+      _discountPrice = autoDiscountPrice;
     }
+    if (discountPrice === "") return;
+    //
+    const autoDiscountRate = parseInt(((_price - _discountPrice) / _price) * 100);
+    //
+    newProduct.current.discount_rate.value = autoDiscountRate;
   }
   function addProductFn() {
     //

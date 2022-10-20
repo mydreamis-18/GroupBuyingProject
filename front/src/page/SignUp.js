@@ -1,10 +1,12 @@
 import { ColumnFlexDiv } from "../styledComponent";
+import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import axios from "axios";
 //
 const SignUp = () => {
   //
   const userData = useRef({});
+  const nav = useNavigate();
   //
   return (
     <ColumnFlexDiv>
@@ -29,13 +31,18 @@ const SignUp = () => {
         _userData[key] = el.value;
       }
     }
-    const signUp = await axios({
+    const _signUp = await axios({
       //
       url: "http://localhost:8000/signUp",
       method: "post",
       data: _userData,
     });
-    alert(signUp.data);
+    const { isSuccess, alertMsg } = _signUp.data;
+    if (isSuccess) {
+      //
+      nav("/login");
+    }
+    alert(alertMsg);
   }
 };
 export default SignUp;

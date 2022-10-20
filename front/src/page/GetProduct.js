@@ -1,28 +1,68 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { buyNow_action } from "../redux/middleware";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Button } from "../styledComponent";
 //
 const GetProduct = () => {
   //
-  const isDefaultImg = useSelector((state) => state.product_reducer.isDefaultImg);
-  const productsIdx = useSelector((state) => state.product_reducer.productsIdx);
-  const products = useSelector((state) => state.product_reducer.products);
+  const { products, productsIdx, isDefaultImg } = useSelector(
+    (state) => ({
+      isDefaultImg: state.product_reducer.isDefaultImg,
+      productsIdx: state.product_reducer.productsIdx,
+      products: state.product_reducer.products,
+    }),
+    shallowEqual
+  );
+  const nav = useNavigate();
   const dispatch = useDispatch();
-  //
   const product = products[productsIdx];
+  const [tense, setTense] = useState(null);
+  const [isProduct, setIsProduct] = useState(false);
+  const [DDayInterval, setDDayInterval] = useState(null);
+  const isLogin = useSelector((state) => state.user_reducer.isLogin);
   const [DDay, setDDay] = useState(product === undefined ? "" : getDDayFn);
   //
-  if (product !== undefined) {
+  console.log("interval");
+  //
+  if (!isProduct && product !== undefined) {
     //
-    setTimeout(() => {
-      //
-      setDDay(getDDayFn);
-    }, 1000);
+    setIsProduct(true);
   }
+  useEffect(() => {
+    //
+    clearInterval(DDayInterval);
+    //
+    if (setIsProduct) {
+      //
+      const isFuture = new Date(product.start_date) - new Date() > 0;
+      if (isFuture) {
+        //
+        setDDay(getDDayFn("future"));
+        setTense("future");
+        return;
+      }
+      const isPast = new Date(product.end_date) - new Date() < 0;
+      if (isPast) {
+        //
+        setDDay(getDDayFn("past"));
+        setTense("past");
+        return;
+      }
+      const _DDayInterval = setInterval(() => {
+        //
+        setDDay(getDDayFn("present"));
+      }, 500);
+      //
+      setTense("present");
+      setDDay(getDDayFn("present"));
+      setDDayInterval(_DDayInterval);
+    }
+  }, [productsIdx]);
+  //
   return (
     <div style={{ border: "1px solid black", margin: "10vw", padding: "2vw" }}>
-      {product === undefined ? (
-        <p>등록된 상품이 없습니다.</p>
-      ) : (
+      {isProduct ? (
         <>
           <img src={isDefaultImg ? require("../img/default.PNG") : "서버 주소" + product.img_path} alt="이미지" />
           <p>상품명: {product.name}</p>
@@ -35,20 +75,54 @@ const GetProduct = () => {
           <br />
           <p>공동 구매가: {product.discount_price}원</p>
           <br />
-          <p>잔여 수량: {product.stock_count}</p>
+          <p>잔여 수량: {product.stock_count}개</p>
           <br />
-          <button onClick={prevProductFn}>이전 상품</button>
-          <br />
-          <br />
-          <button onClick={nextProductFn}>다음 상품</button>
+          <div style={{ display: "flex" }}>
+            <Button style={{ marginLeft: "0" }} onClick={prevProductFn}>
+              이전 상품
+            </Button>
+            <Button onClick={nextProductFn}>다음 상품</Button>
+            {tense === "present" ? (
+              <>
+                <Button onClick={buyNowFn}>즉시 구매하기</Button>
+                <Button onClick={buyTogetherFn}>공동 구매하기</Button>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
         </>
+      ) : (
+        <p>등록된 상품이 없습니다.</p>
       )}
     </div>
   );
-  function getDDayFn() {
+  function buyNowFn() {
     //
-    const isFuture = new Date(product.start_date) - new Date() > 0;
-    if (isFuture) {
+    if (!isLogin) {
+      //
+      alert("로그인을 먼저 해주세요.");
+      nav("/login");
+      return;
+    }
+    if (window.confirm("바로 구매하시겠습니까?")) {
+      //
+      dispatch(buyNow_action(nav));
+    }
+  }
+  function buyTogetherFn() {
+    //
+    if (!isLogin) {
+      //
+      alert("로그인을 먼저 해주세요.");
+      nav("/login");
+      return;
+    }
+    // alert("공동 구매를 진행하시겠습니까?");
+  }
+  function getDDayFn(tense) {
+    //
+    if (tense === "future") {
       return (
         <>
           곧 공동 구매가 시작됩니다.
@@ -57,8 +131,7 @@ const GetProduct = () => {
         </>
       );
     }
-    const isPast = new Date(product.end_date) - new Date() < 0;
-    if (isPast) {
+    if (tense === "past") {
       return (
         <>
           공동 구매가 종료되었습니다.
@@ -67,25 +140,28 @@ const GetProduct = () => {
         </>
       );
     }
-    const timeInterval = new Date(product.end_date) - new Date();
-    //
-    let seconds = Math.floor((timeInterval / 1000) % 60);
-    let days = Math.floor(timeInterval / 1000 / 60 / 60 / 24);
-    let minutes = Math.floor((timeInterval / 1000 / 60) % 60);
-    let hours = Math.floor((timeInterval / 1000 / 60 / 60) % 24);
-    //
-    days = toTwoDigitNumber(days);
-    hours = toTwoDigitNumber(hours);
-    minutes = toTwoDigitNumber(minutes);
-    seconds = toTwoDigitNumber(seconds);
-    //
-    return (
-      <>
-        공동 구매가 진행 중입니다.
-        <br />
-        종료까지 {days}일 {hours}:{minutes}:{seconds} 남음
-      </>
-    );
+    if (tense === "present") {
+      //
+      const timeInterval = new Date(product.end_date) - new Date();
+      //
+      let seconds = Math.floor((timeInterval / 1000) % 60);
+      let days = Math.floor(timeInterval / 1000 / 60 / 60 / 24);
+      let minutes = Math.floor((timeInterval / 1000 / 60) % 60);
+      let hours = Math.floor((timeInterval / 1000 / 60 / 60) % 24);
+      //
+      days = toTwoDigitNumber(days);
+      hours = toTwoDigitNumber(hours);
+      minutes = toTwoDigitNumber(minutes);
+      seconds = toTwoDigitNumber(seconds);
+      //
+      return (
+        <>
+          공동 구매가 진행 중입니다.
+          <br />
+          종료까지 {days}일 {hours}:{minutes}:{seconds} 남음
+        </>
+      );
+    }
   }
   function prevProductFn() {
     //

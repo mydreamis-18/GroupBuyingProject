@@ -2,6 +2,7 @@
 // ㅜ 백엔드에서 사용한 npm 전체 모듈
 // styled-components
 // react-router-dom
+// express-session
 // jsonwebtoken
 // redux-thunk
 // react-redux
@@ -56,10 +57,12 @@ const storage = multer.diskStorage({
   },
 });
 //
-const SALT = 10;
+////////////////////////////////////////////////////////////
+// ㅜ 로그인 및 회원가입 시에 사용되는 암호화 및 토큰에 대한 모듈
 const dot = require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const SALT = 10;
 //
 app.post("/signUp", (req, res) => {
   //
@@ -80,10 +83,10 @@ app.post("/signUp", (req, res) => {
       //
       password = await bcrypt.hash(password, SALT);
       //
-      User.create({ user_id, password }).then(() => res.send("회원 가입이 완료되었습니다."));
+      User.create({ user_id, password }).then(() => res.send({ isSuccess: true, alertMsg: "회원 가입이 완료되었습니다." }));
     }
     //
-    else res.send("해당 ID로 가입한 회원이 있습니다.");
+    else res.send({ isSuccess: false, alertMsg: "해당 ID로 가입한 회원이 있습니다." });
   });
 });
 //
@@ -100,44 +103,143 @@ app.post("/login", (req, res) => {
       const isMatch = await bcrypt.compare(password, _password);
       if (isMatch) {
         //
-        const { access_token, refresh_token } = issueTokenFn();
+        const access_token = issueAccessTokenFn(user_id);
+        const refresh_token = issueRefreshTokenFn(user_id);
         //
         await User.update({ refresh_token }, { where: { user_id } });
         //
-        res.send({ alertMsg: "로그인되었습니다.", access_token, refresh_token });
+        res.send({ isSuccess: true, alertMsg: "로그인되었습니다.", access_token, refresh_token });
       }
       //
-      else res.send({ alertMsg: "비밀번호를 다시 한 번 확인해주세요." });
+      else res.send({ isSuccess: false, alertMsg: "비밀번호를 다시 한 번 확인해주세요." });
     }
     //
-    else res.send({ alertMsg: "존재하지 않는 아이디입니다." });
+    else res.send({ isSuccess: false, alertMsg: "존재하지 않는 아이디입니다." });
   });
 });
 //
-function issueTokenFn(user_id) {
+/////////////////////////////////////////
+// ㅜ 토큰 검증 시 사용되는 세션에 대한 모듈
+const session = require("express-session");
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: false,
+  })
+);
+//
+app.post("/buyNow", verifyTokensMiddleware, (req, res) => {
+  //
+  const { access_token } = req;
+  const { user_id, productsIdx } = req.body;
+  //
+  res.send({ isSuccess: true, access_token, alertMsg: "바로 구매가 완료되었습니다." });
+});
+//
+function issueAccessTokenFn(user_id) {
   //
   // ㅜ payload,scretKey,options
-  const access_token = jwt.sign(
+  return jwt.sign(
     {
       user_id,
     },
-    process.env.ACCESS_TOKEN,
+    process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "1m",
+      expiresIn: "1s",
       issuer: "mydreamis-18",
     }
   );
-  const refresh_token = jwt.sign(
+}
+//
+function issueRefreshTokenFn(user_id) {
+  //
+  return jwt.sign(
     {
       user_id,
     },
-    process.env.REFRESH_TOKEN,
+    process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "2m",
+      expiresIn: "5s",
       issuer: "mydreamis-18",
     }
   );
-  return { access_token, refresh_token };
+}
+//
+async function verifyTokensMiddleware(req, res, next) {
+  //
+  const { user_id, access_token, refresh_token } = req.body;
+  //
+  const verifyAccessToken = await verifyTokenFn(access_token, process.env.ACCESS_TOKEN_SECRET);
+  if (verifyAccessToken.isValid) {
+    //
+    next();
+    return;
+  }
+  let refreshTokenInDB = await User.findOne({ where: { user_id }, attributes: ["refresh_token"] });
+  refreshTokenInDB = refreshTokenInDB.dataValues.refresh_token;
+  //
+  const isSame = refresh_token === refreshTokenInDB;
+  if (!isSame) {
+    //
+    res.send({ isSuccess: false, alertMsg: "다시 로그인해주세요." });
+    return;
+  }
+  const verifyRefreshToken = await verifyTokenFn(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+  if (verifyRefreshToken.isValid) {
+    //
+    const access_token = issueAccessTokenFn(user_id);
+    // req = { ...req, access_token };
+    req.access_token = access_token;
+    next();
+    return;
+  }
+  res.send({ isSuccess: false, alertMsg: "다시 로그인해주세요." });
+  return;
+  //
+  // ㅜ then() 함수 사용
+  // verifyTokenFn(access_token, process.env.ACCESS_TOKEN_SECRET).then((accessToken) => {
+  //   if (accessToken.isValid) {
+  //     //
+  //     next();
+  //     return;
+  //   }
+  //   User.findOne({ where: { user_id }, attributes: ["refresh_token"] })
+  //     .then((obj) => obj.dataValues.refresh_token)
+  //     .then((token) => token === refresh_token)
+  //     .then((isSame) => {
+  //       if (!isSame) {
+  //         //
+  //         res.send({ isSuccess: false, alertMsg: "다시 로그인해주세요" });
+  //         return;
+  //       }
+  //       verifyTokenFn(refresh_token, process.env.REFRESH_TOKEN_SECRET).then((refreshToken) => {
+  //         if (refreshToken.isValid) {
+  //           //
+  //           const access_token = issueAccessTokenFn(user_id);
+  //           req = { ...req, access_token };
+  //           next();
+  //           return;
+  //         }
+  //         res.send({ isSuccess: false, alertMsg: "다시 로그인해주세요" });
+  //         return;
+  //       });
+  //     });
+  // });
+}
+//
+async function verifyTokenFn(token, secretKey) {
+  //
+  // ㅜ 프로미스 객체
+  return jwt.verify(token, secretKey, (err, decode) => {
+    //
+    if (err) {
+      //
+      return { isValid: false };
+    }
+    //
+    else return { isValid: true, decode };
+  });
 }
 //
 ////////////////////////////////////////////////
@@ -168,16 +270,18 @@ app.post("/addProduct/formData", (req, res) => {
     //
     if (err) {
       //
-      res.send(err);
+      res.send({ isSuccess: false, alertMsg: err });
       return;
     }
-    Product.create(req.body).then(() => res.send("상품이 등록되었습니다."));
+    Product.create(req.body).then((obj) => {
+      //
+      res.send({ isSuccess: true, alertMsg: "상품이 등록되었습니다.", newProduct: obj.dataValues });
+    });
   });
 });
 //
 app.post("/getAllProducts", (req, res) => {
   //
-  // 등록된 상품이 없을 경우엔...?
   Product.findAll().then((obj) => res.send(obj));
 });
 //

@@ -8,6 +8,7 @@ import { Header } from "./component";
 //
 function App() {
   //
+  console.log(sessionStorage);
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product_reducer.products);
   const isDoneLoading = useSelector((state) => state.product_reducer.isDoneLoading);
@@ -22,7 +23,7 @@ function App() {
   }
   return (
     <div className="App">
-      <Header/>
+      <Header />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />

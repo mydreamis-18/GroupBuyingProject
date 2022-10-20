@@ -1,12 +1,14 @@
+import { useDispatch } from "react-redux";
 import { login_action } from "../redux/middleware";
 import { ColumnFlexDiv } from "../styledComponent";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 //
 const Login = () => {
   //
   const dispatch = useDispatch();
   const loginData = useRef({});
+  const nav = useNavigate();
   //
   return (
     <ColumnFlexDiv>
@@ -32,7 +34,7 @@ const Login = () => {
         _loginData[key] = el.value;
       }
     }
-    dispatch(login_action(_loginData));
+    dispatch(login_action(_loginData, nav));
   }
 };
 export default Login;

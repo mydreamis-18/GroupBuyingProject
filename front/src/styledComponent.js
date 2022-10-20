@@ -8,7 +8,7 @@ const ColumnFlexDiv = styled.div`
   align-items: center;
   margin: 2vw 1vw;
   display: flex;
-  `;
+`;
 const RowFlexDiv = styled.div`
   justify-content: space-evenly;
   flex-direction: row;
@@ -34,4 +34,7 @@ const LoadingMsg = styled.p`
   margin-top: 40vh;
   font-size: 10vh;
 `;
-export { ColumnFlexDiv, RowFlexDiv, Title, AddProductImg, LoadingMsg };
+const Button = styled.button`
+  margin: 0 1vw;
+`;
+export { ColumnFlexDiv, RowFlexDiv, Title, AddProductImg, LoadingMsg, Button };
