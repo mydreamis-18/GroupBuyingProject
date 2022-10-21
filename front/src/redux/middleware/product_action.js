@@ -1,5 +1,6 @@
 import axios from "axios";
 //
+/////////////////////////////////////////////////////////////
 // ㅜ 변수에 담으면 여러 개의 변수를 내보낼 수 있는 지 확인해보자!
 export const getAllProducts_action = () => {
   //
@@ -14,12 +15,14 @@ export const getAllProducts_action = () => {
     //
     // if (products.length === 0) return;
     //
-    _dispatch({ type: "GET_ALL_PRODUCTS", payload: products });
+    await _dispatch({ type: "GET_ALL_PRODUCTS", payload: products });
+    // console.log("2");
     //
-    setTimeout(() => _dispatch({type: "LOADINGPAGE_OFF"}), 2000);
+    setTimeout(() => _dispatch({ type: "LOADINGPAGE_OFF" }), 2000);
   };
 };
 //
+////////////////////////////////////////////////
 export const addProduct_action = (formData) => {
   //
   return async (_dispatch, getState) => {
@@ -39,6 +42,7 @@ export const addProduct_action = (formData) => {
   };
 };
 //
+/////////////////////////////////////////////////////
 export const deleteProduct_action = (product_id) => {
   //
   return async (_dispatch, getState) => {

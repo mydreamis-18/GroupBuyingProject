@@ -2,6 +2,7 @@ const { Product } = require("../model");
 const express = require("express");
 const router = express.Router();
 //
+///////////////////////////////////////////////
 router.post("/getAllProducts", (req, res) => {
   //
   Product.findAll().then((obj) => res.send(obj));

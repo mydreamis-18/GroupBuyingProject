@@ -1,12 +1,12 @@
 const { issueAccessTokenFn, issueRefreshTokenFn } = require("../service");
-const { verifyTokensMiddleware } = require("../service");
 const { User, BuyNowTransaction, Product } = require("../model");
+const { verifyTokensMiddleware } = require("../service");
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { ConnectionTimedOutError } = require("sequelize");
 const router = express.Router();
 const SALT = 10;
 //
+////////////////////////////////////////////
 router.post("/signUp", async (req, res) => {
   //
   // ㅜ 다양한 동기적 처리 방법
@@ -29,6 +29,7 @@ router.post("/signUp", async (req, res) => {
   });
 });
 //
+/////////////////////////////////////
 router.post("/login", (req, res) => {
   //
   let { user_id, password } = req.body;
@@ -58,12 +59,22 @@ router.post("/login", (req, res) => {
   });
 });
 //
+/////////////////////////////////////////////////////////////
 router.get("/myPage", verifyTokensMiddleware, (req, res) => {
   //
   const { userNum } = req.body;
-  const { access_token } = req;
+  const { newAccessToken } = req;
   //
   console.log("Dd");
   BuyNowTransaction.findAll({ where: { user_id_pk: userNum }, include: [{ model: Product, attributes: ["name", "price"] }] }).then((obj) => console.log(obj.dataValues));
 });
+//
+////////////////////////////////////////////////////////////////////
+router.post("/verifyTokens", verifyTokensMiddleware, (req, res) => {
+  //
+  const { newAccessToken } = req;
+  //
+  res.send({ isSuccess: true, newAccessToken });
+});
+//
 module.exports = router;

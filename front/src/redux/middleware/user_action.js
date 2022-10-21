@@ -1,7 +1,8 @@
-import { forVerifyTokensFn, ReLoginFn, saveNewAccessTokenFn } from "../../function";
+import { saveNewAccessTokenFn } from "../../function";
 import axios from "axios";
 //
-export const login_action = (loginData, nav) => {
+//////////////////////////////////////////////////
+export const login_action = (loginData, toMainPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
@@ -19,7 +20,7 @@ export const login_action = (loginData, nav) => {
       //
       _dispatch({ type: "LOGIN", payload: userNum });
       //
-      nav("/");
+      toMainPageFn();
     }
     // ㅜ 세션의 키 값 가져오기
     // console.log(sessionStorage.key(0))
@@ -29,21 +30,51 @@ export const login_action = (loginData, nav) => {
     alert(alertMsg);
   };
 };
+//
+///////////////////////////////////////////////////////
+export const verifyTokens_action = (toLoginPageFn) => {
+  //
+  return async (_dispatch, getState) => {
+    //
+    const { access_token, refresh_token } = sessionStorage;
+    const _verifyTokens_action = await axios({
+      //
+      url: "http://localhost:8000/verifyTokens",
+      data: { access_token, refresh_token },
+      method: "post",
+    });
+    const { isSuccess, userNum, newAccessToken } = _verifyTokens_action.data;
+    if (isSuccess) {
+      //
+      _dispatch({ type: "LOGIN", payload: userNum });
+    }
+    //
+    else {
+      //
+      _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+    }
+    saveNewAccessTokenFn(newAccessToken);
+  };
+};
+//
+//////////////////////////////////////////////////
 export const myPage_action = (toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
+    const { access_token, refresh_token } = sessionStorage;
     const _myPage_action = await axios({
       //
-      data: { ...forVerifyTokensFn(getState) },
+      data: { access_token, refresh_token },
       url: "http://localhost:8000/myPage",
       method: "get",
     });
-    const { isSuccess, alertMsg } = _myPage_action.data;
-    //
-    const logoutActionFn = () => _dispatch({ type: "LOGOUT" });
-    saveNewAccessTokenFn(_myPage_action.data.access_token);
-    ReLoginFn(isSuccess, logoutActionFn, toLoginPageFn);
+    const { isSuccess, alertMsg, newAccessToken } = _myPage_action.data;
+    if (!isSuccess) {
+      //
+      _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+    }
+    saveNewAccessTokenFn(newAccessToken);
     alert(alertMsg);
   };
 };

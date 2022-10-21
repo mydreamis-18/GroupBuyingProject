@@ -12,10 +12,13 @@ function reducer(state = init, action) {
       return { ...state, isLogin: true, userNum: payload };
     //
     case "LOGOUT":
+      const moveToPageFn = payload;
+      //
       sessionStorage.removeItem("access_token");
       sessionStorage.removeItem("refresh_token");
       console.log(sessionStorage);
       alert("로그아웃되었습니다.");
+      moveToPageFn();
       //
       return { ...state, isLogin: false };
     //

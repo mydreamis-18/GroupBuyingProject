@@ -24,6 +24,7 @@ const Login = () => {
   function loginFn() {
     //
     const _loginData = {};
+    const toMainPageFn = () => nav("/");
     //
     for (const key in loginData.current) {
       //
@@ -34,7 +35,7 @@ const Login = () => {
         _loginData[key] = el.value;
       }
     }
-    dispatch(login_action(_loginData, nav));
+    dispatch(login_action(_loginData, toMainPageFn));
   }
 };
 export default Login;

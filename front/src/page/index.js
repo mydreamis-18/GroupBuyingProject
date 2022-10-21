@@ -7,4 +7,14 @@ import SignUp from "./SignUp";
 import MyPage from "./MyPage";
 import Login from "./Login";
 //
-export { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, MyPage, Login };
+export {
+  //
+  EditProduct,
+  GetProduct,
+  AddProduct,
+  Loading,
+  SignUp,
+  MyPage,
+  Login,
+  Temp,
+};

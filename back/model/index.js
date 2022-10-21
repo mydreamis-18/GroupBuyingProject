@@ -10,20 +10,27 @@ const BuyTogetherTransaction = require("./buyTogetherTransaction");
 const { database, username, password } = config.dev;
 const sequelize = new Sequelize(database, username, password, config.dev);
 //
-db.User = User;
-db.Product = Product;
-db.sequelize = sequelize;
-db.BuyNowTransaction = BuyNowTransaction;
 db.BuyTogetherTransaction = BuyTogetherTransaction;
+db.BuyNowTransaction = BuyNowTransaction;
+db.sequelize = sequelize;
+db.Product = Product;
+db.User = User;
 //
-User.init(sequelize);
-Product.init(sequelize);
-BuyNowTransaction.init(sequelize);
 BuyTogetherTransaction.init(sequelize);
+BuyNowTransaction.init(sequelize);
+Product.init(sequelize);
+User.init(sequelize);
 //
-User.associate(db);
-Product.associate(db);
-BuyNowTransaction.associate(db);
 BuyTogetherTransaction.associate(db);
+BuyNowTransaction.associate(db);
+Product.associate(db);
+User.associate(db);
 //
-module.exports = { sequelize, User, Product, BuyNowTransaction, BuyTogetherTransaction };
+module.exports = {
+  //
+  BuyTogetherTransaction,
+  BuyNowTransaction,
+  sequelize,
+  Product,
+  User,
+};

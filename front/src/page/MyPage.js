@@ -6,7 +6,7 @@ const MyPage = () => {
   useEffect(() => {
     //
     // axios
-  }, [])
+  }, []);
   //
   return (
     <>

@@ -3,10 +3,11 @@ const { verifyTokensMiddleware } = require("../service");
 const express = require("express");
 const router = express.Router();
 //
+//////////////////////////////////////////////////////////////
 router.post("/", verifyTokensMiddleware, async (req, res) => {
   //
   let alertMsg = null;
-  const { access_token } = req;
+  const { newAccessToken } = req;
   const { userNum, product_id_fk } = req.body;
   //
   switch (req.baseUrl) {
@@ -21,6 +22,6 @@ router.post("/", verifyTokensMiddleware, async (req, res) => {
     default:
       break;
   }
-  res.send({ isSuccess: true, access_token, alertMsg });
+  res.send({ isSuccess: true, alertMsg, newAccessToken });
 });
 module.exports = router;

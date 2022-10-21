@@ -1,8 +1,9 @@
-import { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, MyPage, Login } from "./page";
+import { Loading, GetProduct, AddProduct, EditProduct, SignUp, Login, MyPage, Temp } from "./page";
+import { getAllProducts_action, verifyTokens_action } from "./redux/middleware";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { getAllProducts_action } from "./redux/middleware";
 import { Routes, Route } from "react-router-dom";
 import { Header } from "./component";
+import { useEffect } from "react";
 //
 // addProduct 페이지에 대해서 관리자만 접근 가능하게 설정해야 함!
 //
@@ -10,17 +11,26 @@ function App() {
   //
   console.log(sessionStorage);
   const dispatch = useDispatch();
-  const { products, isOver, isLoadingPage } = useSelector(state => ({
-    products: state.product_reducer.products,
-    isOver: state.product_reducer.isOver,
-    isLoadingPage: state.product_reducer.isLoadingPage,
-  }), shallowEqual)
-  if (!isOver) {
+  const { products, isLoadingPage } = useSelector(
+    (state) => ({
+      products: state.product_reducer.products,
+      isLoadingPage: state.product_reducer.isLoadingPage,
+    }),
+    shallowEqual
+  );
+  //
+  useEffect(() => {
     //
     dispatch(getAllProducts_action());
-  }
+    //
+    const { access_token, refresh_token } = sessionStorage;
+    if (access_token !== undefined && refresh_token !== undefined) {
+      //
+      dispatch(verifyTokens_action());
+    }
+  }, []);
   //
-  else if (!isLoadingPage) {
+  if (!isLoadingPage) {
     //
     console.log("[ COMPLETE ] GET_ALL_PRODUCTS", products);
   }
@@ -41,7 +51,7 @@ function App() {
   ////////////////////////////////////
   function LoadingRedirect({ page }) {
     //
-    return isLoadingPage ? page : <Loading />;
+    return isLoadingPage ? <Loading /> : page;
   }
 }
 export default App;

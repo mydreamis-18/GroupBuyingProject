@@ -35,7 +35,7 @@ function issueRefreshTokenFn(user_id) {
 ///////////////////////////////////////////////////////
 async function verifyTokensMiddleware(req, res, next) {
   //
-  const { userNum, access_token, refresh_token } = req.body;
+  const { access_token, refresh_token } = req.body;
   //
   const verifyAccessToken = await verifyTokenFn(access_token, process.env.ACCESS_TOKEN_SECRET);
   if (verifyAccessToken.isValid) {
@@ -43,21 +43,21 @@ async function verifyTokensMiddleware(req, res, next) {
     next();
     return;
   }
-  const isSame = await isSameRefreshTokenFn(userNum, refresh_token);
-  if (!isSame) {
+  const verifyRefreshToken = await verifyTokenFn(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+  if (!verifyRefreshToken.isValid) {
     //
     res.send({ isSuccess: false, alertMsg: "다시 로그인해주세요." });
     return;
   }
-  const verifyRefreshToken = await verifyTokenFn(refresh_token, process.env.REFRESH_TOKEN_SECRET);
-  if (verifyRefreshToken.isValid) {
+  const user_id = verifyRefreshToken.decode.user_id;
+  const isSame = await isSameRefreshTokenFn(user_id, refresh_token);
+  if (isSame) {
     //
-    const user_id = await User.findOne({ where: { id: userNum }, attributes: ["user_id"] });
-    const access_token = issueAccessTokenFn(user_id);
+    const newAccessToken = issueAccessTokenFn(user_id);
+    req.newAccessToken = newAccessToken;
     //
-    // req = { ...req, access_token }; // 안 됨
+    // req = { ...req, newAccessToken }; // 안 됨
     //
-    req.access_token = access_token;
     next();
     return;
   }
@@ -111,11 +111,18 @@ async function verifyTokenFn(token, secretKey) {
 }
 //
 /////////////////////////////////////////////////////////////
-async function isSameRefreshTokenFn(userNum, refresh_token) {
+async function isSameRefreshTokenFn(user_id, refresh_token) {
   //
-  const tokenInDB = await User.findOne({ where: { id: userNum }, attributes: ["refresh_token"] });
+  const tokenInDB = await User.findOne({ where: { user_id }, attributes: ["refresh_token"] });
   //
   return refresh_token === tokenInDB.dataValues.refresh_token;
 }
 //
-module.exports = { issueAccessTokenFn, issueRefreshTokenFn, verifyTokensMiddleware, verifyTokenFn, isSameRefreshTokenFn };
+module.exports = {
+  //
+  verifyTokensMiddleware,
+  isSameRefreshTokenFn,
+  issueRefreshTokenFn,
+  issueAccessTokenFn,
+  verifyTokenFn,
+};
