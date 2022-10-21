@@ -19,7 +19,7 @@ class Product extends Sequelize.Model {
           type: Sequelize.STRING,
           allowNull: false,
         },
-        stock_count: {
+        quantity: {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
@@ -57,7 +57,8 @@ class Product extends Sequelize.Model {
   }
   static associate(db) {
     //
-    db.Product.hasMany(db.Transaction, { foreignKey: "product_id", scourceKey: "id" })
+    db.Product.hasMany(db.BuyNowTransaction, { foreignKey: "product_id_fk", scourceKey: "id" });
+    db.Product.hasMany(db.BuyTogetherTransaction, { foreignKey: "product_id_fk", scourceKey: "id" });
   }
 }
 module.exports = Product;

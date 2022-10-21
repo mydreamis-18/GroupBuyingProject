@@ -1,6 +1,6 @@
 const init = {
   //
-  user_id: null,
+  userNum: null,
   isLogin: false,
 };
 function reducer(state = init, action) {
@@ -9,7 +9,7 @@ function reducer(state = init, action) {
   switch (type) {
     //
     case "LOGIN":
-      return { ...state, isLogin: true, user_id: payload };
+      return { ...state, isLogin: true, userNum: payload };
     //
     case "LOGOUT":
       sessionStorage.removeItem("access_token");

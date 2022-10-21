@@ -1,5 +1,5 @@
+import { buy_action, buyTogether_action } from "../redux/middleware";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { buyNow_action } from "../redux/middleware";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "../styledComponent";
@@ -75,7 +75,7 @@ const GetProduct = () => {
           <br />
           <p>공동 구매가: {product.discount_price}원</p>
           <br />
-          <p>잔여 수량: {product.stock_count}개</p>
+          <p>잔여 수량: {product.quantity}개</p>
           <br />
           <div style={{ display: "flex" }}>
             <Button style={{ marginLeft: "0" }} onClick={prevProductFn}>
@@ -105,9 +105,10 @@ const GetProduct = () => {
       nav("/login");
       return;
     }
-    if (window.confirm("바로 구매하시겠습니까?")) {
+    if (window.confirm(`즉시 구매가 ${product.price}원에 바로 구매하시겠습니까?`)) {
       //
-      dispatch(buyNow_action(nav));
+      const toLoginPageFn = () => nav("/login");
+      dispatch(buy_action("buyNow", toLoginPageFn));
     }
   }
   function buyTogetherFn() {
@@ -118,7 +119,11 @@ const GetProduct = () => {
       nav("/login");
       return;
     }
-    // alert("공동 구매를 진행하시겠습니까?");
+    if (window.confirm(`${product.discount_price}원에 공동 구매를 진행하시겠습니까?\n(종료 시까지 구매 인원이 1명일 경우 환불 처리될 예정입니다.)`)) {
+      //
+      const toLoginPageFn = () => nav("/login");
+      dispatch(buy_action("buyTogether", toLoginPageFn));
+    }
   }
   function getDDayFn(tense) {
     //

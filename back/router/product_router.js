@@ -1,0 +1,48 @@
+const { Product } = require("../model");
+const express = require("express");
+const router = express.Router();
+//
+router.post("/getAllProducts", (req, res) => {
+  //
+  Product.findAll().then((obj) => res.send(obj));
+});
+//
+////////////////////////////////////////////////
+//    10.14.20
+// 1. DB에 같은 이름의 데이터가 있는 지 확인한 다음
+// 2. 업로드한 이미지 파일을 백엔드 폴더에 저장하고
+// 3. 나머지 formData() 객체의 데이터를 DB에 저장
+router.post("/addProduct/formData", (req, res) => {
+  //
+  // console.log(req.file); // formData() 객체를 사용하지 않으면 undefined
+  // console.log(req.body.img); // undefined // formData() 객체를 사용하지 않으면 {}
+  // console.log(req.body.start_date); // axiois before (object) 값과는 다른 값이군... '2022-10-12T05:35:18.107Z' (string)
+  //
+  const fileFilter = (req, file, cb) => {
+    //
+    const { name } = req.body;
+    //
+    Product.findOne({ where: { name } }).then((obj) => {
+      //
+      if (obj === null) cb(null, true);
+      else {
+        cb("같은 이름의 상품이 이미 등록되어 있습니다.", false);
+      }
+    });
+  };
+  const addProductMulter = multer({ storage, fileFilter }).single("img");
+  addProductMulter(req, res, (err) => {
+    //
+    if (err) {
+      //
+      res.send({ isSuccess: false, alertMsg: err });
+      return;
+    }
+    Product.create(req.body).then((obj) => {
+      //
+      res.send({ isSuccess: true, alertMsg: "상품이 등록되었습니다.", newProduct: obj.dataValues });
+    });
+  });
+});
+//
+module.exports = router;

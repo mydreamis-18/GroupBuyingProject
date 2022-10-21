@@ -15,7 +15,7 @@ const Header = () => {
       {isLogin ? (
         <>
           <span onClick={() => nav("/myPage")}>MyPage</span>
-          <span onClick={logoutFn}>Logout</span>
+          <span onClick={() => dispatch({ type: "LOGOUT" })}>Logout</span>
         </>
       ) : (
         <>
@@ -25,9 +25,5 @@ const Header = () => {
       )}
     </RowFlexDiv>
   );
-  function logoutFn() {
-    //
-    dispatch({ type: "LOGOUT" });
-  }
 };
 export default Header;

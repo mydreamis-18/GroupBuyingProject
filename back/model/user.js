@@ -32,7 +32,8 @@ class User extends Sequelize.Model {
   }
   static associate(db) {
     //
-    db.User.hasMany(db.Transaction, { foreignKey: "user_id", sourceKey: "id" });
+    db.User.hasMany(db.BuyNowTransaction, { foreignKey: "user_id_fk", sourceKey: "id" });
+    db.User.hasMany(db.BuyTogetherTransaction, { foreignKey: "user_id_fk", sourceKey: "id" });
   }
 }
 module.exports = User;

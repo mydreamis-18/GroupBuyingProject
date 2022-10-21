@@ -1,4 +1,4 @@
-import { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, Login } from "./page";
+import { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, MyPage, Login } from "./page";
 import { getAllProducts_action } from "./redux/middleware";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
@@ -8,7 +8,7 @@ import { Header } from "./component";
 //
 function App() {
   //
-  console.log(sessionStorage);
+  console.log("300");
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product_reducer.products);
   const isDoneLoading = useSelector((state) => state.product_reducer.isDoneLoading);
@@ -27,6 +27,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
+        <Route path="/myPage" element={<MyPage />} />
         <Route path="/editProduct" element={<EditProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
         <Route path="/" element={<LoadingRedirect page={<GetProduct />} />} />

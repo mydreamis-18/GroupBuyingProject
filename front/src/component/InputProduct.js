@@ -89,7 +89,7 @@ const InputProduct = (props) => {
       <AddProductImg src={isNewImg ? URL.createObjectURL(img) : isDefaultImg ? require("../img/default.PNG") : img} alt="" />
       <br />
       <label>재고 수량 </label>
-      <input name="stock_count" type="number" min={"0"} autoComplete="false" ref={(el) => (newProduct.current.stock_count = el)} />
+      <input name="quantity" type="number" min={"0"} autoComplete="false" ref={(el) => (newProduct.current.quantity = el)} />
       <br />
       <label>즉시 구매가 </label>
       <input name="price" type="number" step={"1000"} min={"0"} autoComplete="false" ref={(el) => (newProduct.current.price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />

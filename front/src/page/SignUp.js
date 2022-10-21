@@ -5,6 +5,8 @@ import axios from "axios";
 //
 const SignUp = () => {
   //
+  // 닉네임 추가해야 함!
+  //
   const userData = useRef({});
   const nav = useNavigate();
   //

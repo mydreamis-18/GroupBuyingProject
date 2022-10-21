@@ -1,3 +1,4 @@
+import { forVerifyTokensFn, ReLoginFn, saveNewAccessTokenFn } from "../../function";
 import axios from "axios";
 //
 export const login_action = (loginData, nav) => {
@@ -10,13 +11,15 @@ export const login_action = (loginData, nav) => {
       method: "post",
       data: loginData,
     });
-    const { isSuccess, alertMsg, access_token, refresh_token } = _login_action.data;
+    const { isSuccess, alertMsg, userNum, access_token, refresh_token } = _login_action.data;
     if (isSuccess) {
       //
       sessionStorage.setItem("refresh_token", refresh_token);
       sessionStorage.setItem("access_token", access_token);
       //
-      _dispatch({ type: "LOGIN", payload: loginData.user_id });
+      _dispatch({ type: "LOGIN", payload: userNum });
+      //
+      nav("/");
     }
     // ㅜ 세션의 키 값 가져오기
     // console.log(sessionStorage.key(0))
@@ -24,27 +27,23 @@ export const login_action = (loginData, nav) => {
     // console.log(sessionStorage.length)
     //
     alert(alertMsg);
-    nav("/");
   };
 };
-export const buyNow_action = (nav) => {
+export const myPage_action = (toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
-    const { user_id, productsIdx } = getState().user_reducer;
-    const { access_token, refresh_token } = sessionStorage;
-    const _buyNow_action = await axios({
+    const _myPage_action = await axios({
       //
-      data: { productsIdx, user_id, access_token, refresh_token },
-      url: "http://localhost:8000/buyNow",
-      method: "post",
+      data: { ...forVerifyTokensFn(getState) },
+      url: "http://localhost:8000/myPage",
+      method: "get",
     });
-    const { isSuccess, alertMsg } = _buyNow_action.data;
-    if (!isSuccess) {
-      //
-      _dispatch({ type: "LOGOUT" });
-      nav("/login");
-    }
+    const { isSuccess, alertMsg } = _myPage_action.data;
+    //
+    const logoutActionFn = () => _dispatch({ type: "LOGOUT" });
+    saveNewAccessTokenFn(_myPage_action.data.access_token);
+    ReLoginFn(isSuccess, logoutActionFn, toLoginPageFn);
     alert(alertMsg);
   };
 };
