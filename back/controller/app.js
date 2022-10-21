@@ -70,7 +70,7 @@ app.use(
 //
 //////////////////////////////////
 // ㅜ 라우터의 요청 주소에 대한 설정
-const { transactionRouter, productRouter, userRouter } = require("../router");
+const { transactionRouter, productRouter, userRouter } = require(".");
 app.use("/buyTogether", transactionRouter);
 app.use("/buyNow", transactionRouter);
 app.use("/", productRouter);

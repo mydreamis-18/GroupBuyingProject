@@ -1,6 +1,7 @@
 const { User } = require("../model");
 const jwt = require("jsonwebtoken");
 //
+//////////////////////////////////////
 function issueAccessTokenFn(user_id) {
   //
   // ㅜ payload,scretKey,options
@@ -16,6 +17,7 @@ function issueAccessTokenFn(user_id) {
   );
 }
 //
+///////////////////////////////////////
 function issueRefreshTokenFn(user_id) {
   //
   return jwt.sign(
@@ -29,6 +31,8 @@ function issueRefreshTokenFn(user_id) {
     }
   );
 }
+//
+///////////////////////////////////////////////////////
 async function verifyTokensMiddleware(req, res, next) {
   //
   const { userNum, access_token, refresh_token } = req.body;
@@ -91,9 +95,10 @@ async function verifyTokensMiddleware(req, res, next) {
   // });
 }
 //
+////////////////////////////////////////////////
 async function verifyTokenFn(token, secretKey) {
+  // ㅗ promise 객체가 끝날때까지 기다려주는 역할
   //
-  // ㅜ 프로미스 객체
   return jwt.verify(token, secretKey, (err, decode) => {
     //
     if (err) {
@@ -105,6 +110,7 @@ async function verifyTokenFn(token, secretKey) {
   });
 }
 //
+/////////////////////////////////////////////////////////////
 async function isSameRefreshTokenFn(userNum, refresh_token) {
   //
   const tokenInDB = await User.findOne({ where: { id: userNum }, attributes: ["refresh_token"] });

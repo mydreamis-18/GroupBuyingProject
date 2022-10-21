@@ -1,6 +1,6 @@
 import { EditProduct, GetProduct, AddProduct, Temp, Loading, SignUp, MyPage, Login } from "./page";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { getAllProducts_action } from "./redux/middleware";
-import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import { Header } from "./component";
 //
@@ -8,17 +8,20 @@ import { Header } from "./component";
 //
 function App() {
   //
-  console.log("300");
+  console.log(sessionStorage);
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.product_reducer.products);
-  const isDoneLoading = useSelector((state) => state.product_reducer.isDoneLoading);
-  //
-  if (!isDoneLoading) {
+  const { products, isOver, isLoadingPage } = useSelector(state => ({
+    products: state.product_reducer.products,
+    isOver: state.product_reducer.isOver,
+    isLoadingPage: state.product_reducer.isLoadingPage,
+  }), shallowEqual)
+  if (!isOver) {
     //
     dispatch(getAllProducts_action());
   }
   //
-  else {
+  else if (!isLoadingPage) {
+    //
     console.log("[ COMPLETE ] GET_ALL_PRODUCTS", products);
   }
   return (
@@ -34,10 +37,11 @@ function App() {
       </Routes>
     </div>
   );
+  //
   ////////////////////////////////////
   function LoadingRedirect({ page }) {
     //
-    return isDoneLoading ? page : <Loading />;
+    return isLoadingPage ? page : <Loading />;
   }
 }
 export default App;

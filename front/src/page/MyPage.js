@@ -1,6 +1,12 @@
 import { RowFlexDiv } from "../styledComponent";
+import { useEffect } from "react";
 //
 const MyPage = () => {
+  //
+  useEffect(() => {
+    //
+    // axios
+  }, [])
   //
   return (
     <>

@@ -1,5 +1,5 @@
-const { issueAccessTokenFn, issueRefreshTokenFn } = require("../function");
-const { verifyTokensMiddleware } = require("../function");
+const { issueAccessTokenFn, issueRefreshTokenFn } = require("../service");
+const { verifyTokensMiddleware } = require("../service");
 const { User, BuyNowTransaction, Product } = require("../model");
 const express = require("express");
 const bcrypt = require("bcrypt");

@@ -1,10 +1,11 @@
 const init = {
   //
   products: new Array(0),
-  isDoneLoading: false,
+  isLoadingPage: false,
   isDefaultImg: true,
   productsLength: 0,
   productsIdx: 0,
+  isOver: false,
   temp: "temp",
 };
 function reducer(state = init, action) {
@@ -15,10 +16,10 @@ function reducer(state = init, action) {
   switch (type) {
     //
     case "GET_ALL_PRODUCTS":
-      return { ...state, products: payload, productsLength: payload.length };
+      return { ...state, products: payload, productsLength: payload.length, isOver: true };
     //
-    case "LOADING_DONE":
-      return { ...state, isDoneLoading: true };
+    case "LOADINGPAGE_OFF":
+      return { ...state, isLoadingPage: true };
     //
     case "ADD_PRODUCT":
       return { ...state, products: [...products, payload], productsLength: productsLength + 1 };

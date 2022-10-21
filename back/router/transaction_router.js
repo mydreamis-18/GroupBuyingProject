@@ -1,5 +1,5 @@
 const { BuyNowTransaction, BuyTogetherTransaction } = require("../model");
-const { verifyTokensMiddleware } = require("../function");
+const { verifyTokensMiddleware } = require("../service");
 const express = require("express");
 const router = express.Router();
 //
