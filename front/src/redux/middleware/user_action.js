@@ -1,4 +1,3 @@
-import { saveNewAccessTokenFn } from "../../function";
 import axios from "axios";
 //
 //////////////////////////////////////////////////
@@ -9,8 +8,8 @@ export const login_action = (loginData, toMainPageFn) => {
     const _login_action = await axios({
       //
       url: "http://localhost:8000/login",
-      method: "post",
       data: loginData,
+      method: "post",
     });
     const { isSuccess, alertMsg, userNum, access_token, refresh_token } = _login_action.data;
     if (isSuccess) {
@@ -37,6 +36,13 @@ export const verifyTokens_action = (toLoginPageFn) => {
   return async (_dispatch, getState) => {
     //
     const { access_token, refresh_token } = sessionStorage;
+    if (access_token === undefined && refresh_token === undefined) {
+      //
+      return;
+    }
+    const { isVerifying } = getState().user_reducer;
+    if (isVerifying) return;
+    //
     const _verifyTokens_action = await axios({
       //
       url: "http://localhost:8000/verifyTokens",
@@ -47,13 +53,10 @@ export const verifyTokens_action = (toLoginPageFn) => {
     if (isSuccess) {
       //
       _dispatch({ type: "LOGIN", payload: userNum });
+      _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
     }
     //
-    else {
-      //
-      _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
-    }
-    saveNewAccessTokenFn(newAccessToken);
+    else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
   };
 };
 //
@@ -62,19 +65,26 @@ export const myPage_action = (toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
+    _dispatch({ type: "VERIFYING_ON" });
+    //
     const { access_token, refresh_token } = sessionStorage;
     const _myPage_action = await axios({
       //
       data: { access_token, refresh_token },
       url: "http://localhost:8000/myPage",
-      method: "get",
+      method: "post",
     });
-    const { isSuccess, alertMsg, newAccessToken } = _myPage_action.data;
-    if (!isSuccess) {
+    const { isSuccess, alertMsg, newAccessToken, buyNowTransactions, buyTogetherTransactions } = _myPage_action.data;
+    if (isSuccess) {
       //
-      _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+      _dispatch({ type: "ADD_TRANSACTIONS", payload: { buyNowTransactions, buyTogetherTransactions } });
+      _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
     }
-    saveNewAccessTokenFn(newAccessToken);
+    //
+    else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+    //
+    _dispatch({ type: "VERIFYING_OFF" });
+    //
     alert(alertMsg);
   };
 };

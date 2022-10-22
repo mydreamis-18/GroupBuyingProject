@@ -7,8 +7,8 @@ const router = express.Router();
 router.post("/", verifyTokensMiddleware, async (req, res) => {
   //
   let alertMsg = null;
-  const { newAccessToken } = req;
-  const { userNum, product_id_fk } = req.body;
+  const { product_id_fk } = req.body;
+  const { userNum, newAccessToken } = req;
   //
   switch (req.baseUrl) {
     case "/buyNow":

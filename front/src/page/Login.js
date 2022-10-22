@@ -13,9 +13,9 @@ const Login = () => {
   return (
     <ColumnFlexDiv>
       <br />
-      <input name="user_id" ref={(el) => (loginData.current.user_id = el)} />
+      <input name="user_id" autoComplete="off" ref={(el) => (loginData.current.user_id = el)} />
       <br />
-      <input name="password" ref={(el) => (loginData.current.password = el)} />
+      <input name="password" autoComplete="off" ref={(el) => (loginData.current.password = el)} />
       <br />
       <button onClick={loginFn}>로그인</button>
       <br />

@@ -1,5 +1,5 @@
-const { issueAccessTokenFn, issueRefreshTokenFn } = require("../service");
-const { User, BuyNowTransaction, Product } = require("../model");
+const { issueAccessTokenFn, issueRefreshTokenFn, findTransactionsFn } = require("../service");
+const { User, BuyNowTransaction, BuyTogetherTransaction } = require("../model");
 const { verifyTokensMiddleware } = require("../service");
 const express = require("express");
 const bcrypt = require("bcrypt");
@@ -59,22 +59,23 @@ router.post("/login", (req, res) => {
   });
 });
 //
-/////////////////////////////////////////////////////////////
-router.get("/myPage", verifyTokensMiddleware, (req, res) => {
-  //
-  const { userNum } = req.body;
-  const { newAccessToken } = req;
-  //
-  console.log("Dd");
-  BuyNowTransaction.findAll({ where: { user_id_pk: userNum }, include: [{ model: Product, attributes: ["name", "price"] }] }).then((obj) => console.log(obj.dataValues));
-});
-//
 ////////////////////////////////////////////////////////////////////
 router.post("/verifyTokens", verifyTokensMiddleware, (req, res) => {
   //
-  const { newAccessToken } = req;
+  const { userNum, newAccessToken } = req;
   //
-  res.send({ isSuccess: true, newAccessToken });
+  res.send({ isSuccess: true, userNum, newAccessToken });
+});
+//
+/////////////////////////////////////////////////////////////
+router.post("/myPage", verifyTokensMiddleware, async (req, res) => {
+  //
+  const { userNum, newAccessToken } = req;
+  //
+  const buyNowTransactions = await findTransactionsFn(userNum, BuyNowTransaction);
+  const buyTogetherTransactions = await findTransactionsFn(userNum, BuyTogetherTransaction);
+  //
+  res.send({ isSuccess: true, alertMsg: "거래 내역 조회가 완료되었습니다.", newAccessToken, buyNowTransactions, buyTogetherTransactions });
 });
 //
 module.exports = router;

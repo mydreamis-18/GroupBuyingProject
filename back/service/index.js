@@ -1,4 +1,4 @@
-const { User } = require("../model");
+const { User, Product } = require("../model");
 const jwt = require("jsonwebtoken");
 //
 //////////////////////////////////////
@@ -35,11 +35,18 @@ function issueRefreshTokenFn(user_id) {
 ///////////////////////////////////////////////////////
 async function verifyTokensMiddleware(req, res, next) {
   //
+  console.log("verifyTokensMiddleware");
+  //
   const { access_token, refresh_token } = req.body;
   //
   const verifyAccessToken = await verifyTokenFn(access_token, process.env.ACCESS_TOKEN_SECRET);
   if (verifyAccessToken.isValid) {
     //
+    const user_id = verifyAccessToken.decode.user_id;
+    //
+    let userNum = await User.findOne({ where: { user_id }, attributes: ["id"] });
+    userNum = userNum.dataValues.id;
+    req.userNum = userNum;
     next();
     return;
   }
@@ -50,11 +57,12 @@ async function verifyTokensMiddleware(req, res, next) {
     return;
   }
   const user_id = verifyRefreshToken.decode.user_id;
-  const isSame = await isSameRefreshTokenFn(user_id, refresh_token);
+  const { isSame, userNum } = await isSameRefreshTokenFn(user_id, refresh_token);
   if (isSame) {
     //
     const newAccessToken = issueAccessTokenFn(user_id);
     req.newAccessToken = newAccessToken;
+    req.userNum = userNum;
     //
     // req = { ...req, newAccessToken }; // 안 됨
     //
@@ -113,9 +121,23 @@ async function verifyTokenFn(token, secretKey) {
 /////////////////////////////////////////////////////////////
 async function isSameRefreshTokenFn(user_id, refresh_token) {
   //
-  const tokenInDB = await User.findOne({ where: { user_id }, attributes: ["refresh_token"] });
+  const tokenInDB = await User.findOne({ where: { user_id }, attributes: ["id", "refresh_token"] });
   //
-  return refresh_token === tokenInDB.dataValues.refresh_token;
+  const isSame = refresh_token === tokenInDB.dataValues.refresh_token;
+  const { id } = tokenInDB.dataValues;
+  //
+  return { isSame, userNum: id };
+}
+//
+///////////////////////////////////////
+async function findTransactionsFn(userNum, model) {
+  //
+  let result = await model.findAll({ where: { user_id_fk: userNum }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["name", "price"] }] });
+  if (result.length !== 0) {
+    //
+    result = result.map((el) => el.dataValues).map((el) => ({ ...el, Product: el.Product.dataValues }));
+  }
+  return result;
 }
 //
 module.exports = {
@@ -124,5 +146,6 @@ module.exports = {
   isSameRefreshTokenFn,
   issueRefreshTokenFn,
   issueAccessTokenFn,
+  findTransactionsFn,
   verifyTokenFn,
 };

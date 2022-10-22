@@ -38,25 +38,6 @@ app.use(express.json());
 const { sequelize, User, Product, BuyNowTransaction, BuyTogetherTransaction } = require("../model");
 sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
-////////////////////////////////////////////////////////////
-// ㅜ 업로드 이미지 파일을 DB에 저장하기 위해 필요한 multer 모듈
-const path = require("path");
-const multer = require("multer");
-//
-const storage = multer.diskStorage({
-  //
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "/tmp/uploads"));
-  },
-  filename: function (req, file, cb) {
-    // cb(null, file.fieldname + "-" + Date.now()); // 공식 문서
-    //
-    // ㅜ 한글 포함해서 원래 파일명 그대로 저장하기
-    const filename = Buffer.from(file.originalname, "latin1").toString("utf8");
-    cb(null, filename);
-  },
-});
-//
 /////////////////////////////////////////
 // ㅜ 토큰 검증 시 사용되는 세션에 대한 모듈
 const session = require("express-session");

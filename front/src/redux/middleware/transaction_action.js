@@ -1,4 +1,3 @@
-import { saveNewAccessTokenFn } from "../../function";
 import axios from "axios";
 //
 ////////////////////////////////////////////////////
@@ -16,11 +15,13 @@ export const buy_action = (path, toLoginPageFn) => {
       method: "post",
     });
     const { isSuccess, alertMsg, newAccessToken } = _buy_action.data;
-    if (!isSuccess) {
+    if (isSuccess) {
       //
-      _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+      _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
     }
-    saveNewAccessTokenFn(newAccessToken);
+    //
+    else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+    //
     alert(alertMsg);
   };
 };

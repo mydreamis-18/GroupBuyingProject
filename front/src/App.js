@@ -1,7 +1,7 @@
 import { Loading, GetProduct, AddProduct, EditProduct, SignUp, Login, MyPage, Temp } from "./page";
 import { getAllProducts_action, verifyTokens_action } from "./redux/middleware";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { Header } from "./component";
 import { useEffect } from "react";
 //
@@ -9,8 +9,9 @@ import { useEffect } from "react";
 //
 function App() {
   //
-  console.log(sessionStorage);
+  const nav = useNavigate();
   const dispatch = useDispatch();
+  const isVerifying = useSelector(state => state.user_reducer.isVerifying);
   const { products, isLoadingPage } = useSelector(
     (state) => ({
       products: state.product_reducer.products,
@@ -21,13 +22,10 @@ function App() {
   //
   useEffect(() => {
     //
-    dispatch(getAllProducts_action());
+    const toLoginPageFn = () => nav("/login");
     //
-    const { access_token, refresh_token } = sessionStorage;
-    if (access_token !== undefined && refresh_token !== undefined) {
-      //
-      dispatch(verifyTokens_action());
-    }
+    dispatch(verifyTokens_action(toLoginPageFn));
+    dispatch(getAllProducts_action());
   }, []);
   //
   if (!isLoadingPage) {
