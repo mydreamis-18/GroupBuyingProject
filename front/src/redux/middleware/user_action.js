@@ -59,32 +59,3 @@ export const verifyTokens_action = (toLoginPageFn) => {
     else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
   };
 };
-//
-//////////////////////////////////////////////////
-export const myPage_action = (toLoginPageFn) => {
-  //
-  return async (_dispatch, getState) => {
-    //
-    _dispatch({ type: "VERIFYING_ON" });
-    //
-    const { access_token, refresh_token } = sessionStorage;
-    const _myPage_action = await axios({
-      //
-      data: { access_token, refresh_token },
-      url: "http://localhost:8000/myPage",
-      method: "post",
-    });
-    const { isSuccess, alertMsg, newAccessToken, buyNowTransactions, buyTogetherTransactions } = _myPage_action.data;
-    if (isSuccess) {
-      //
-      _dispatch({ type: "ADD_TRANSACTIONS", payload: { buyNowTransactions, buyTogetherTransactions } });
-      _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
-    }
-    //
-    else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
-    //
-    _dispatch({ type: "VERIFYING_OFF" });
-    //
-    alert(alertMsg);
-  };
-};

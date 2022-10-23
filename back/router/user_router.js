@@ -1,6 +1,6 @@
-const { issueAccessTokenFn, issueRefreshTokenFn, findTransactionsFn } = require("../service");
-const { User, BuyNowTransaction, BuyTogetherTransaction } = require("../model");
+const { issueAccessTokenFn, issueRefreshTokenFn } = require("../service");
 const { verifyTokensMiddleware } = require("../service");
+const { User } = require("../model");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
@@ -65,17 +65,6 @@ router.post("/verifyTokens", verifyTokensMiddleware, (req, res) => {
   const { userNum, newAccessToken } = req;
   //
   res.send({ isSuccess: true, userNum, newAccessToken });
-});
-//
-/////////////////////////////////////////////////////////////
-router.post("/myPage", verifyTokensMiddleware, async (req, res) => {
-  //
-  const { userNum, newAccessToken } = req;
-  //
-  const buyNowTransactions = await findTransactionsFn(userNum, BuyNowTransaction);
-  const buyTogetherTransactions = await findTransactionsFn(userNum, BuyTogetherTransaction);
-  //
-  res.send({ isSuccess: true, alertMsg: "거래 내역 조회가 완료되었습니다.", newAccessToken, buyNowTransactions, buyTogetherTransactions });
 });
 //
 module.exports = router;

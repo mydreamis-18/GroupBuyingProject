@@ -132,12 +132,18 @@ async function isSameRefreshTokenFn(user_id, refresh_token) {
 ///////////////////////////////////////
 async function findTransactionsFn(userNum, model) {
   //
-  let result = await model.findAll({ where: { user_id_fk: userNum }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["name", "price"] }] });
+  let result = await model.findAll({ where: { user_id_fk: userNum }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
   if (result.length !== 0) {
     //
     result = result.map((el) => el.dataValues).map((el) => ({ ...el, Product: el.Product.dataValues }));
   }
   return result;
+}
+//
+////////////////////////////////////////
+async function changeToRefundFn(model) {
+  //
+  return await model.update({ is_refund: true }, { where: { user_id_fk: userNum, product_id_fk: productNum } }).then((obj) => console.log("1", obj))
 }
 //
 module.exports = {
@@ -147,5 +153,6 @@ module.exports = {
   issueRefreshTokenFn,
   issueAccessTokenFn,
   findTransactionsFn,
+  changeToRefundFn,
   verifyTokenFn,
 };

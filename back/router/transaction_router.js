@@ -1,27 +1,36 @@
 const { BuyNowTransaction, BuyTogetherTransaction } = require("../model");
-const { verifyTokensMiddleware } = require("../service");
+const { findTransactionsFn, changeToRefundFn } = require("../service");
 const express = require("express");
 const router = express.Router();
+
 //
-//////////////////////////////////////////////////////////////
-router.post("/", verifyTokensMiddleware, async (req, res) => {
-  //
-  let alertMsg = null;
-  const { product_id_fk } = req.body;
-  const { userNum, newAccessToken } = req;
-  //
-  switch (req.baseUrl) {
-    case "/buyNow":
-      alertMsg = "바로 구매가 완료되었습니다.";
-      await BuyNowTransaction.create({ user_id_fk: userNum, product_id_fk });
-      break;
-    case "/buyTogether":
-      alertMsg = "공동 구매가 완료되었습니다.";
-      await BuyTogetherTransaction.create({ user_id_fk: userNum, product_id_fk });
-      break;
-    default:
-      break;
-  }
-  res.send({ isSuccess: true, alertMsg, newAccessToken });
+/////////////////////////////////////////////////////////////
+router.post("/myPage", verifyTokensMiddleware, async (req, res) => {
+    //
+    const { userNum, newAccessToken } = req;
+    //
+    const buyNowTransactions = await findTransactionsFn(userNum, BuyNowTransaction);
+    const buyTogetherTransactions = await findTransactionsFn(userNum, BuyTogetherTransaction);
+    //
+    res.send({ isSuccess: true, alertMsg: "거래 내역 조회가 완료되었습니다.", newAccessToken, buyNowTransactions, buyTogetherTransactions });
 });
+//
+////////////////////////////////////////////////////////////////////
+router.post("/refund", verifyTokensMiddleware, async (req, res) => {
+    //
+    const { type, productNum } = req.body;
+    const { userNum, newAccessToken } = req;
+    //
+    if (type === "바로 구매") {
+        //
+        await changeToRefundFn(BuyNowTransaction);
+    }
+    //
+    else if (type === "공동 구매") {
+        //
+        await changeToRefundFn(BuyTogetherTransaction);
+    }
+    res.send({ isSuccess: true, alertMsg: "환불이 완료되었습니다.", newAccessToken });
+})
+//
 module.exports = router;

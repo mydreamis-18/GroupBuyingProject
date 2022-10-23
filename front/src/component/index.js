@@ -1,6 +1,6 @@
 import InputProduct from "./InputProduct";
-import Transaction from "./Transaction";
+import Transactions from "./Transactions";
 import DatePicker from "./DatePicker";
 import Header from "../page/Header";
 //
-export { InputProduct, Transaction, DatePicker, Header };
+export { InputProduct, Transactions, DatePicker, Header };

@@ -35,7 +35,7 @@ app.use(express.json());
 //
 ///////////////////////////
 // ㅜ 서버 실행 시 MySQL 연동
-const { sequelize, User, Product, BuyNowTransaction, BuyTogetherTransaction } = require("../model");
+const { sequelize } = require("../model");
 sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
 /////////////////////////////////////////
@@ -51,8 +51,8 @@ app.use(
 //
 //////////////////////////////////
 // ㅜ 라우터의 요청 주소에 대한 설정
-const { transactionRouter, productRouter, userRouter } = require(".");
-app.use("/buyTogether", transactionRouter);
-app.use("/buyNow", transactionRouter);
+const { productRouter, userRouter, buyRouter } = require(".");
+app.use("/buyTogether", buyRouter);
+app.use("/buyNow", buyRouter);
 app.use("/", productRouter);
 app.use("/", userRouter);

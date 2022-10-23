@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import { myPage_action } from "../redux/middleware"
 import { RowFlexDiv, Span } from "../styledComponent";
+import { myPage_action } from "../redux/middleware"
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Transaction } from "../component";
+import { Transactions } from "../component";
 //
 const MyPage = () => {
   //
@@ -22,7 +22,7 @@ const MyPage = () => {
     //
     if (transactions !== undefined) {
       //
-      const _transactions = transactions.map((el) => <Transaction transactions={el}></Transaction>);
+      const _transactions = transactions.map((el) => <Transactions transactions={el}></Transactions>);
       setHitory(_transactions);
     }
   }, [transactions])
