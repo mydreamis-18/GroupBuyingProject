@@ -14,21 +14,27 @@ const RowFlexDiv = styled.div`
   flex-direction: row;
   border-radius: 20px;
   align-items: center;
-  font-weight: 900;
   margin: 2vw 1vw;
-  font-size: 4vw;
   display: flex;
 `;
-const Title = styled.p`
+const TitleP = styled.p`
   text-align: center;
   font-weight: 900;
   font-size: 3vw;
   margin: 1vw 0;
 `;
+const HeaderSpan = styled.span`
+  font-weight: 900;
+  font-size: 4vw;
+`;
+const Span = styled.span`
+  text-align: center;
+  width: 15vw;
+`;
 const AddProductImg = styled.img`
   width: 10vw;
 `;
-const LoadingMsg = styled.p`
+const LoadingMsgP = styled.p`
   text-align: center;
   font-weight: 900;
   margin-top: 40vh;
@@ -37,4 +43,4 @@ const LoadingMsg = styled.p`
 const Button = styled.button`
   margin: 0 1vw;
 `;
-export { ColumnFlexDiv, RowFlexDiv, Title, AddProductImg, LoadingMsg, Button };
+export { ColumnFlexDiv, RowFlexDiv, TitleP, HeaderSpan, Span, AddProductImg, LoadingMsgP, Button };

@@ -1,35 +1,43 @@
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { myPage_action } from "../redux/middleware"
-import { RowFlexDiv } from "../styledComponent";
+import { RowFlexDiv, Span } from "../styledComponent";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Transaction } from "../component";
 //
 const MyPage = () => {
   //
   const nav = useNavigate();
   const dispatch = useDispatch();
   const toLoginPageFn = () => nav("/login");
-  const { buyNowTransactions, buyTogetherTransactions } = useSelector((state) => ({
-    buyNowTransactions: state.user_reducer.buyNowTransactions,
-    buyTogetherTransactions: state.user_reducer.buyTogetherTransactions
-  }), shallowEqual)
+  const [history, setHitory] = useState("거래 내역이 없습니다.");
+  const transactions = useSelector((state) => state.user_reducer.transactions);
   //
   useEffect(() => {
     //
     dispatch(myPage_action(toLoginPageFn));
   }, []);
   //
+  useEffect(() => {
+    //
+    if (transactions !== undefined) {
+      //
+      const _transactions = transactions.map((el) => <Transaction transactions={el}></Transaction>);
+      setHitory(_transactions);
+    }
+  }, [transactions])
+  //
   return (
     <>
       <RowFlexDiv style={{ fontSize: "1vw" }}>
-        <span>상품명</span>
-        <span>구매 가격</span>
-        <span>구매 시각</span>
-        <span>환불 여부</span>
-        <span>환불 시각</span>
+        <Span>상품명</Span>
+        <Span>구매 가격</Span>
+        <Span>구매 방법</Span>
+        <Span>구매 시각</Span>
+        <Span>환불 여부</Span>
+        <Span>환불 시각</Span>
       </RowFlexDiv>
-        {buyNowTransactions.toString()}
-        {buyTogetherTransactions.toString()}
+      {history}
     </>
   );
 };

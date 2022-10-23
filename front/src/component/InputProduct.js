@@ -1,4 +1,4 @@
-import { ColumnFlexDiv, Title, AddProductImg } from "../styledComponent";
+import { ColumnFlexDiv, TitleP, AddProductImg } from "../styledComponent";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { addProduct_action } from "../redux/middleware";
 import { useState, useEffect, useRef } from "react";
@@ -76,7 +76,7 @@ const InputProduct = (props) => {
   }
   return (
     <ColumnFlexDiv>
-      <Title>{pageName === "add" ? "상품 등록" : "상품 정보 수정"}</Title>
+      <TitleP>{pageName === "add" ? "상품 등록" : "상품 정보 수정"}</TitleP>
       <label>상품명 </label>
       <input name="name" autoComplete="false" ref={(el) => (newProduct.current.name = el)} />
       <br />

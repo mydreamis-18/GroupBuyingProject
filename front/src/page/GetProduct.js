@@ -1,5 +1,5 @@
-import { buy_action, buyTogether_action } from "../redux/middleware";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { buy_action } from "../redux/middleware";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "../styledComponent";

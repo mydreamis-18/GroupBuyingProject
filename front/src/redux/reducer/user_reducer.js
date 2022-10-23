@@ -3,8 +3,7 @@ const init = {
   userNum: null,
   isLogin: false,
   isVerifying: false,
-  buyNowTransactions: new Array(0),
-  buyTogetherTransactions: new Array(0),
+  transactions: new Array(0)
 };
 function reducer(state = init, action) {
   //
@@ -23,7 +22,7 @@ function reducer(state = init, action) {
       alert("로그아웃되었습니다.");
       moveToPageFn();
       //
-      return { ...state, isLogin: false, isVerifying: false, buyNowTransaction: new Array(0), buyTogetherTransaction: new Array(0) };
+      return { ...state, isLogin: false, isVerifying: false, transaction: new Array(0) };
     //
     case "VERIFYING_ON":
       return { ...state, isVerifying: true };
@@ -39,7 +38,18 @@ function reducer(state = init, action) {
       return state;
     //
     case "ADD_TRANSACTIONS":
-      return { ...state, buyNowTransactions: payload.buyNowTransactions, buyTogetherTransactions: payload.buyTogetherTransactions };
+      let { buyNowTransactions, buyTogetherTransactions } = payload;
+      buyNowTransactions = buyNowTransactions.map((el) => ({ ...el, Product: { ...el.Product, type: "바로 구매" } }));
+      buyTogetherTransactions = buyTogetherTransactions.map((el) => ({ ...el, Product: { ...el.Product, type: "공동 구매" } }));
+      //
+      let _transactions = buyNowTransactions.concat(buyTogetherTransactions);
+      _transactions.sort((a, b) => {
+        if (a.created_at > b.created_at) return 1;
+        else if (a.created_at < b.created_at) return -1;
+        return 0;
+      })
+      return { ...state, transactions: _transactions };
+    //
     default:
       return state;
   }

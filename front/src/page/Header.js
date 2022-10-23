@@ -1,5 +1,5 @@
+import { RowFlexDiv, HeaderSpan } from "../styledComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { RowFlexDiv } from "../styledComponent";
 import { useNavigate } from "react-router-dom";
 //
 const Header = () => {
@@ -11,16 +11,16 @@ const Header = () => {
   //
   return (
     <RowFlexDiv>
-      <span onClick={() => nav("/")}>Home</span>
+      <HeaderSpan onClick={() => nav("/")}>Home</HeaderSpan>
       {isLogin ? (
         <>
-          <span onClick={() => nav("/myPage")}>MyPage</span>
-          <span onClick={() => dispatch({ type: "LOGOUT", payload: toMainPageFn })}>Logout</span>
+          <HeaderSpan onClick={() => nav("/myPage")}>MyPage</HeaderSpan>
+          <HeaderSpan onClick={() => dispatch({ type: "LOGOUT", payload: toMainPageFn })}>Logout</HeaderSpan>
         </>
       ) : (
         <>
-          <span onClick={() => nav("/login")}>Login</span>
-          <span onClick={() => nav("/signUp")}>SignUp</span>
+          <HeaderSpan onClick={() => nav("/login")}>Login</HeaderSpan>
+          <HeaderSpan onClick={() => nav("/signUp")}>SignUp</HeaderSpan>
         </>
       )}
     </RowFlexDiv>
