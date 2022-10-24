@@ -71,9 +71,11 @@ const GetProduct = () => {
           <br />
           <p>{DDay}</p>
           <br />
-          <p>즉시 구매가: {product.price}원</p>
+          <p>바로 구매가: {product.price}원</p>
           <br />
           <p>공동 구매가: {product.discount_price}원</p>
+          <br />
+          <p>현재 공동 구매자: 명</p>
           <br />
           <p>잔여 수량: {product.quantity}개</p>
           <br />
@@ -108,7 +110,7 @@ const GetProduct = () => {
     if (window.confirm(`즉시 구매가 ${product.price}원에 바로 구매하시겠습니까?`)) {
       //
       const toLoginPageFn = () => nav("/login");
-      dispatch(buy_action("buyNow", toLoginPageFn));
+      dispatch(buy_action("바로 구매", toLoginPageFn));
     }
   }
   function buyTogetherFn() {
@@ -122,7 +124,7 @@ const GetProduct = () => {
     if (window.confirm(`${product.discount_price}원에 공동 구매를 진행하시겠습니까?\n(종료 시까지 구매 인원이 1명일 경우 환불 처리될 예정입니다.)`)) {
       //
       const toLoginPageFn = () => nav("/login");
-      dispatch(buy_action("buyTogether", toLoginPageFn));
+      dispatch(buy_action("공동 구매", toLoginPageFn));
     }
   }
   function getDDayFn(tense) {

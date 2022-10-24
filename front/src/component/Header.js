@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
   //
   const nav = useNavigate();
-  const toMainPageFn = () => nav("/");
   const dispatch = useDispatch();
+  const toMainPageFn = () => nav("/");
   const isLogin = useSelector((state) => state.user_reducer.isLogin);
   //
   return (

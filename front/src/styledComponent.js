@@ -29,6 +29,7 @@ const HeaderSpan = styled.span`
 `;
 const Span = styled.span`
   text-align: center;
+  font-size: 1.5vw;
   width: 15vw;
 `;
 const AddProductImg = styled.img`

@@ -14,21 +14,27 @@ function reducer(state = init, action) {
   let newIdx = null;
   switch (type) {
     //
+    ///////////////////////
     case "GET_ALL_PRODUCTS":
       // console.log("1");
+      console.log("[ COMPLETE ] GET_ALL_PRODUCTS", products);
       return { ...state, products: payload, productsLength: payload.length };
     //
+    ///////////////////////
     case "LOADINGPAGE_OFF":
       return { ...state, isLoadingPage: false };
     //
+    ///////////////////
     case "ADD_PRODUCT":
       return { ...state, products: [...products, payload], productsLength: productsLength + 1 };
     //
+    /////////////////////
     case "DELETE_PRODUCT":
+      // 미구현
       return { ...state, products: payload };
     //
+    ////////////////////////
     case "PLUS_PRODUCTS_IDX":
-      //
       newIdx = productsIdx + 1;
       //
       const isLast = newIdx >= productsLength;
@@ -36,8 +42,8 @@ function reducer(state = init, action) {
       //
       return { ...state, productsIdx: newIdx };
     //
+    /////////////////////////
     case "MINUS_PRODUCTS_IDX":
-      //
       newIdx = productsIdx - 1;
       //
       const isFirst = newIdx < 0;
@@ -45,8 +51,14 @@ function reducer(state = init, action) {
       //
       return { ...state, productsIdx: newIdx };
     //
-    case "":
-      return { ...state, products: payload };
+    //////////////////////////
+    case "SELECT_PRODUCTS_IDX":
+      products.some((el, idx) => {
+        //
+        newIdx = idx;
+        return el.id === payload;
+      });
+      return { ...state, productsIdx: newIdx };
     //
     default:
       return state;

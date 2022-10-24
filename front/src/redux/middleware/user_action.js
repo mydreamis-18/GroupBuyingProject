@@ -11,10 +11,15 @@ export const login_action = (loginData, toMainPageFn) => {
       data: loginData,
       method: "post",
     });
-    const { isSuccess, alertMsg, userNum, access_token, refresh_token } = _login_action.data;
+    const { isSuccess, alertMsg, userNum, access_token, refresh_token, points, buyNowTransactions, buyTogetherTransactions } = _login_action.data;
     if (isSuccess) {
       //
+      _dispatch({ type: "ADD_TRANSACTIONS", payload: { buyNowTransactions, buyTogetherTransactions } });
+      //
       sessionStorage.setItem("refresh_token", refresh_token);
+      //
+      _dispatch({ type: "UPDATE_POINTS", payload: points });
+      //
       sessionStorage.setItem("access_token", access_token);
       //
       _dispatch({ type: "LOGIN", payload: userNum });
@@ -40,9 +45,6 @@ export const verifyTokens_action = (toLoginPageFn) => {
       //
       return;
     }
-    const { isVerifying } = getState().user_reducer;
-    if (isVerifying) return;
-    //
     const _verifyTokens_action = await axios({
       //
       url: "http://localhost:8000/verifyTokens",

@@ -1,6 +1,5 @@
-const { issueAccessTokenFn, issueRefreshTokenFn } = require("../service");
-const { verifyTokensMiddleware } = require("../service");
-const { User } = require("../model");
+const { issueAccessTokenFn, issueRefreshTokenFn, verifyTokensMiddleware, findTransactionsFn } = require("../service");
+const { User, BuyNowTransaction, BuyTogetherTransaction } = require("../model");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
@@ -22,7 +21,7 @@ router.post("/signUp", async (req, res) => {
   User.findOrCreate({ where: { user_id }, defaults: { password } }).then(([user, created]) => {
     if (created) {
       //
-      res.send({ isSuccess: true, alertMsg: "회원 가입이 완료되었습니다." });
+      res.send({ isSuccess: true, alertMsg: "회원 가입이 완료되었습니다.\n얼른 로그인 해서 증정된 포인트를 확인해보세요!" });
     }
     //
     else res.send({ isSuccess: false, alertMsg: "해당 ID로 가입한 회원이 있습니다." });
@@ -34,11 +33,12 @@ router.post("/login", (req, res) => {
   //
   let { user_id, password } = req.body;
   //
-  User.findOne({ where: { user_id }, attributes: ["id", "password"] }).then(async (obj) => {
+  User.findOne({ where: { user_id }, attributes: ["id", "password", "points"] }).then(async (obj) => {
     //
     if (obj !== null) {
       //
       const userNum = obj.dataValues.id;
+      const points = obj.dataValues.points;
       const _password = obj.dataValues.password;
       //
       const isMatch = await bcrypt.compare(password, _password);
@@ -49,7 +49,10 @@ router.post("/login", (req, res) => {
         //
         await User.update({ refresh_token }, { where: { user_id } });
         //
-        res.send({ isSuccess: true, alertMsg: "로그인되었습니다.", userNum, access_token, refresh_token });
+        const buyNowTransactions = await findTransactionsFn(BuyNowTransaction, userNum, "바로 구매");
+        const buyTogetherTransactions = await findTransactionsFn(BuyTogetherTransaction, userNum, "공동 구매");
+        //
+        res.send({ isSuccess: true, alertMsg: "로그인되었습니다.", userNum, access_token, refresh_token, points, buyNowTransactions, buyTogetherTransactions });
       }
       //
       else res.send({ isSuccess: false, alertMsg: "비밀번호를 다시 한 번 확인해주세요." });

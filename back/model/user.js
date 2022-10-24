@@ -15,6 +15,15 @@ class User extends Sequelize.Model {
           type: Sequelize.STRING(),
           allowNull: false,
         },
+        // nickname: {
+        //   type: Sequelize.STRING(),
+        //   allowNull: false,
+        // },
+        points: {
+          type: Sequelize.INTEGER,
+          defaultValue: 1000,
+          allowNull: false,
+        },
         refresh_token: {
           type: Sequelize.STRING(),
         },
@@ -32,6 +41,7 @@ class User extends Sequelize.Model {
   }
   static associate(db) {
     //
+    db.User.hasMany(db.Notification, { foreignKey: "user_id_fk", sourceKey: "id" });
     db.User.hasMany(db.BuyNowTransaction, { foreignKey: "user_id_fk", sourceKey: "id" });
     db.User.hasMany(db.BuyTogetherTransaction, { foreignKey: "user_id_fk", sourceKey: "id" });
   }

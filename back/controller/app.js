@@ -51,8 +51,7 @@ app.use(
 //
 //////////////////////////////////
 // ㅜ 라우터의 요청 주소에 대한 설정
-const { productRouter, userRouter, buyRouter } = require(".");
-app.use("/buyTogether", buyRouter);
-app.use("/buyNow", buyRouter);
+const { userRouter, productRouter, transactionRouter } = require(".");
+app.use("/", transactionRouter);
 app.use("/", productRouter);
 app.use("/", userRouter);

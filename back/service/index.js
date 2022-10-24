@@ -123,6 +123,10 @@ async function isSameRefreshTokenFn(user_id, refresh_token) {
   //
   const tokenInDB = await User.findOne({ where: { user_id }, attributes: ["id", "refresh_token"] });
   //
+  if (tokenInDB === null) {
+    //
+    return { isSame: false };
+  }
   const isSame = refresh_token === tokenInDB.dataValues.refresh_token;
   const { id } = tokenInDB.dataValues;
   //
@@ -130,20 +134,28 @@ async function isSameRefreshTokenFn(user_id, refresh_token) {
 }
 //
 ///////////////////////////////////////
-async function findTransactionsFn(userNum, model) {
+async function findTransactionFn(model, id, type) {
+  //
+  const result = await model.findOne({ where: { id: id }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
+  //
+  return { ...result.dataValues, Product: { ...result.Product.dataValues, type } };
+}
+//
+///////////////////////////////////////
+async function findTransactionsFn(model, userNum, type) {
   //
   let result = await model.findAll({ where: { user_id_fk: userNum }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
   if (result.length !== 0) {
     //
-    result = result.map((el) => el.dataValues).map((el) => ({ ...el, Product: el.Product.dataValues }));
+    result = result.map((el) => ({ ...el.dataValues, Product: { ...el.dataValues.Product.dataValues, type } }));
   }
   return result;
 }
 //
 ////////////////////////////////////////
-async function changeToRefundFn(model) {
+async function changeToRefundFn(model, userNum, productNum, created_at) {
   //
-  return await model.update({ is_refund: true }, { where: { user_id_fk: userNum, product_id_fk: productNum } }).then((obj) => console.log("1", obj))
+  return await model.update({ is_refund: true }, { where: { user_id_fk: userNum, product_id_fk: productNum, created_at } });
 }
 //
 module.exports = {
@@ -153,6 +165,7 @@ module.exports = {
   issueRefreshTokenFn,
   issueAccessTokenFn,
   findTransactionsFn,
+  findTransactionFn,
   changeToRefundFn,
   verifyTokenFn,
 };
