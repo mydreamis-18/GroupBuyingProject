@@ -1,43 +1,60 @@
-import { ColumnFlexDiv } from "../styledComponent";
+import { ColumnFlexDiv, TitleP, Label, Button } from "../styledComponent";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import axios from "axios";
 //
 const SignUp = () => {
   //
-  // 닉네임 추가해야 함!
-  //
-  const userData = useRef({});
+  const inputData = useRef({});
   const nav = useNavigate();
   //
   return (
-    <ColumnFlexDiv>
-      <br />
-      <input name="user_id" autoComplete="off" ref={(el) => (userData.current.user_id = el)} />
-      <br />
-      <input name="password" autoComplete="off" ref={(el) => (userData.current.password = el)} />
-      <br />
-      <button onClick={signUp}>회원가입</button>
-      <br />
-    </ColumnFlexDiv>
+    <>
+      <TitleP>회원 가입</TitleP>
+      <ColumnFlexDiv>
+        <br />
+        <Label htmlFor="nickname">닉네임</Label>
+        <input id="nickname" name="nickname" autoComplete="off" ref={(el) => (inputData.current.nickname = el)} />
+        <br />
+        <Label htmlFor="user_id">아이디</Label>
+        <input id="user_id" name="user_id" autoComplete="off" ref={(el) => (inputData.current.user_id = el)} />
+        <br />
+        <Label htmlFor="password">비밀번호</Label>
+        <input id="password" name="password" type="password" autoComplete="off" ref={(el) => (inputData.current.password = el)} />
+        <br />
+        <Button onClick={signUp}>가입하기</Button>
+        <br />
+      </ColumnFlexDiv>
+    </>
   );
+  //
+  /////////////////////////
   async function signUp() {
     //
-    const _userData = {};
+    let isNull = false;
+    const _inputData = {};
     //
-    for (const key in userData.current) {
+    for (const key in inputData.current) {
       //
-      if (Object.hasOwnProperty.call(userData.current, key)) {
+      if (Object.hasOwnProperty.call(inputData.current, key)) {
         //
-        const el = userData.current[key];
-        _userData[key] = el.value;
+        const el = inputData.current[key];
+        //
+        if (el.value === "") {
+          //
+          isNull = true;
+          return;
+        }
+        _inputData[key] = el.value;
       }
     }
+    if (isNull) return;
+    //
     const _signUp = await axios({
       //
       url: "http://localhost:8000/signUp",
+      data: _inputData,
       method: "post",
-      data: _userData,
     });
     const { isSuccess, alertMsg } = _signUp.data;
     if (isSuccess) {

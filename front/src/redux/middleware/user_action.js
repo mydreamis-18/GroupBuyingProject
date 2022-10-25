@@ -5,31 +5,58 @@ export const login_action = (loginData, toMainPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
+    _dispatch({ type: "USER_DATA_IS_LOADING" });
+    _dispatch({ type: "LOADINGPAGE_ON" });
+    //
     const _login_action = await axios({
       //
       url: "http://localhost:8000/login",
       data: loginData,
       method: "post",
     });
-    const { isSuccess, alertMsg, userNum, access_token, refresh_token, points, buyNowTransactions, buyTogetherTransactions } = _login_action.data;
+    const { isSuccess, alertMsg, access_token, refresh_token, userData } = _login_action.data;
     if (isSuccess) {
       //
-      _dispatch({ type: "ADD_TRANSACTIONS", payload: { buyNowTransactions, buyTogetherTransactions } });
       //
       sessionStorage.setItem("refresh_token", refresh_token);
-      //
-      _dispatch({ type: "UPDATE_POINTS", payload: points });
-      //
       sessionStorage.setItem("access_token", access_token);
+      _dispatch({ type: "USER_DATA_IS_READY" });
       //
-      _dispatch({ type: "LOGIN", payload: userNum });
-      //
+      saveUserDataFn(_dispatch, userData);
       toMainPageFn();
+      //
     }
     // ㅜ 세션의 키 값 가져오기
     // console.log(sessionStorage.key(0))
     // console.log(sessionStorage.key(1))
     // console.log(sessionStorage.length)
+    //
+    alert(alertMsg);
+  };
+};
+//
+////////////////////////////////////////////////////////////////////
+export const updateMyData_action = (nickname, toLoginPageFn) => {
+  //
+  return async (_dispatch, getState) => {
+    //
+    const { access_token, refresh_token } = sessionStorage;
+    const { userNum } = getState().user_reducer;
+    const _updateMyData_action = await axios({
+      //
+      data: { userNum, nickname, access_token, refresh_token },
+      url: "http://localhost:8000/updateMyData",
+      method: "post",
+    });
+    console.log(_updateMyData_action.data);
+    const { isSuccess, alertMsg, newAccessToken } = _updateMyData_action.data;
+    if (isSuccess) {
+      //
+      _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
+      _dispatch({ type: "CHANGE_NICKNAME", payload: nickname });
+    }
+    //
+    else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
     //
     alert(alertMsg);
   };
@@ -43,6 +70,7 @@ export const verifyTokens_action = (toLoginPageFn) => {
     const { access_token, refresh_token } = sessionStorage;
     if (access_token === undefined && refresh_token === undefined) {
       //
+      _dispatch({ type: "USER_DATA_IS_READY" });
       return;
     }
     const _verifyTokens_action = await axios({
@@ -51,13 +79,27 @@ export const verifyTokens_action = (toLoginPageFn) => {
       data: { access_token, refresh_token },
       method: "post",
     });
-    const { isSuccess, userNum, newAccessToken } = _verifyTokens_action.data;
+    const { isSuccess, newAccessToken, userData } = _verifyTokens_action.data;
     if (isSuccess) {
       //
-      _dispatch({ type: "LOGIN", payload: userNum });
+      saveUserDataFn(_dispatch, userData);
+      //
       _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
     }
     //
     else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+    //
+    _dispatch({ type: "USER_DATA_IS_READY" });
   };
 };
+//
+//////////////////////////////////////////////
+function saveUserDataFn(_dispatch, userData) {
+  //
+  const { id, nickname, points, BuyNowTransactions, BuyTogetherTransactions, Notifications } = userData;
+  //
+  _dispatch({ type: "SAVE_TRANSACTIONS", payload: { BuyNowTransactions, BuyTogetherTransactions } });
+  _dispatch({ type: "SAVE_NOTIFICATIONS", payload: Notifications });
+  _dispatch({ type: "LOGIN", payload: { userNum: id, nickname } });
+  _dispatch({ type: "UPDATE_POINTS", payload: points });
+}

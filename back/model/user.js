@@ -6,26 +6,26 @@ class User extends Sequelize.Model {
     //
     return super.init(
       {
+        nickname: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
         user_id: {
-          type: Sequelize.STRING(),
+          type: Sequelize.STRING,
           allowNull: false,
           unique: true,
         },
         password: {
-          type: Sequelize.STRING(),
+          type: Sequelize.STRING,
           allowNull: false,
         },
-        // nickname: {
-        //   type: Sequelize.STRING(),
-        //   allowNull: false,
-        // },
         points: {
           type: Sequelize.INTEGER,
           defaultValue: 1000,
           allowNull: false,
         },
         refresh_token: {
-          type: Sequelize.STRING(),
+          type: Sequelize.STRING,
         },
       },
       {

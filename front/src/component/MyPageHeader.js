@@ -1,4 +1,4 @@
-import { RowFlexDiv, Span } from "../styledComponent";
+import { RowFlexDiv, SmallSpan } from "../styledComponent";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 //
@@ -9,11 +9,13 @@ const MyPageHeader = () => {
   //
   return (
     <RowFlexDiv>
-      <Span style={{ fontWeight: "900" }} onClick={() => nav("/myTransactions")}>
-        ㅇMyTransactionsㅇ
-      </Span>
-      <Span style={{ fontWeight: "900" }}>ㅇMyPoints: {points}ㅇ</Span>
-      <Span style={{ fontWeight: "900" }}>ㅇMyDataㅇ</Span>
+      <SmallSpan style={{ fontWeight: "900" }} onClick={() => nav("/myTransactions")}>
+        MyTransactions
+      </SmallSpan>
+      <SmallSpan style={{ fontWeight: "900" }}>MyPoints: {points}</SmallSpan>
+      <SmallSpan style={{ fontWeight: "900" }} onClick={() => nav("/myData")}>
+        MyData
+      </SmallSpan>
     </RowFlexDiv>
   );
 };

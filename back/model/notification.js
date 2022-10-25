@@ -7,12 +7,7 @@ class Notification extends Sequelize.Model {
     return super.init(
       {
         message: {
-          type: Sequelize.STRING(),
-          allowNull: false,
-        },
-        did_check: {
-          type: Sequelize.BOOLEAN,
-          defaultValue: false,
+          type: Sequelize.STRING,
           allowNull: false,
         },
       },

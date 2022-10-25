@@ -2,7 +2,7 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { buy_action } from "../redux/middleware";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Button } from "../styledComponent";
+import { LeftP, Button } from "../styledComponent";
 //
 const GetProduct = () => {
   //
@@ -65,19 +65,19 @@ const GetProduct = () => {
       {isProduct ? (
         <>
           <img src={isDefaultImg ? require("../img/default.PNG") : "서버 주소" + product.img_path} alt="이미지" />
-          <p>상품명: {product.name}</p>
+          <LeftP>상품명: {product.name}</LeftP>
           <br />
-          <p>상품 설명: {product.content}</p>
+          <LeftP>상품 설명: {product.content}</LeftP>
           <br />
-          <p>{DDay}</p>
+          <LeftP>{DDay}</LeftP>
           <br />
-          <p>바로 구매가: {product.price}원</p>
+          <LeftP>바로 구매가: {product.price}원</LeftP>
           <br />
-          <p>공동 구매가: {product.discount_price}원</p>
+          <LeftP>공동 구매가: {product.discount_price}원</LeftP>
           <br />
-          <p>현재 공동 구매자: 명</p>
+          <LeftP>현재 공동 구매자: 명</LeftP>
           <br />
-          <p>잔여 수량: {product.quantity}개</p>
+          <LeftP>잔여 수량: {product.quantity}개</LeftP>
           <br />
           <div style={{ display: "flex" }}>
             <Button style={{ marginLeft: "0" }} onClick={prevProductFn}>
@@ -86,7 +86,7 @@ const GetProduct = () => {
             <Button onClick={nextProductFn}>다음 상품</Button>
             {tense === "present" ? (
               <>
-                <Button onClick={buyNowFn}>즉시 구매하기</Button>
+                <Button onClick={buyNowFn}>바로 구매하기</Button>
                 <Button onClick={buyTogetherFn}>공동 구매하기</Button>
               </>
             ) : (
@@ -95,7 +95,7 @@ const GetProduct = () => {
           </div>
         </>
       ) : (
-        <p>등록된 상품이 없습니다.</p>
+        <LeftP>등록된 상품이 없습니다.</LeftP>
       )}
     </div>
   );

@@ -18,7 +18,7 @@ export const getAllProducts_action = () => {
     await _dispatch({ type: "GET_ALL_PRODUCTS", payload: products });
     // console.log("2");
     //
-    setTimeout(() => _dispatch({ type: "LOADINGPAGE_OFF" }), 2000);
+    // setTimeout(() => _dispatch({ type: "LOADINGPAGE_OFF" }), 2000);
   };
 };
 //

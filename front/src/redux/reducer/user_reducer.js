@@ -3,19 +3,33 @@ const init = {
   points: null,
   userNum: null,
   isLogin: false,
-  notification: new Array(0),
+  nickname: null,
+  isUserDataReady: false,
+  notifications: new Array(0),
 };
 function reducer(state = init, action) {
   //
-  const { points, userNum, isLogin, notification } = state;
+  const { isUserDataReady, isLogin, userNum, nickname, points, notifications } = state;
   const { type, payload } = action;
   switch (type) {
     //
-    /////////////
-    case "LOGIN":
-      return { ...state, isLogin: true, userNum: payload };
+    ////////////////////////////
+    case "USER_DATA_IS_LOADING":
+      state.isUserDataReady = false;
+      return state;
+    //
+    //////////////////////////
+    case "USER_DATA_IS_READY":
+      return { ...state, isUserDataReady: true };
     //
     /////////////
+    case "LOGIN":
+      state.nickname = payload.nickname;
+      state.userNum = payload.userNum;
+      state.isLogin = true;
+      return state;
+    //
+    //////////////
     case "LOGOUT":
       const moveToPageFn = payload;
       //
@@ -25,7 +39,7 @@ function reducer(state = init, action) {
       alert("로그아웃되었습니다.");
       moveToPageFn();
       //
-      return { ...state, isLogin: false, transaction: new Array(0) };
+      return { ...state, isLogin: false, userNum: null, nickname: null };
     //
     ///////////////////////////
     case "IS_NEW_ACCESS_TOKEN":
@@ -35,9 +49,24 @@ function reducer(state = init, action) {
       }
       return state;
     //
-    /////////////////
+    ///////////////////////
+    case "CHANGE_NICKNAME":
+      state.nickname = payload;
+      return state;
+    //
+    /////////////////////
     case "UPDATE_POINTS":
       state.points = payload;
+      return state;
+    //
+    //////////////////////////
+    case "SAVE_NOTIFICATIONS":
+      state.notifications = payload;
+      return state;
+    //
+    ////////////////////////
+    case "ADD_NOTIFICATION":
+      state.notifications = [payload, ...state.notifications];
       return state;
     //
     default:

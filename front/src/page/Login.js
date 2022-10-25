@@ -1,5 +1,5 @@
+import { ColumnFlexDiv, TitleP, Label, Button } from "../styledComponent";
 import { login_action } from "../redux/middleware";
-import { ColumnFlexDiv } from "../styledComponent";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useRef } from "react";
@@ -11,18 +11,26 @@ const Login = () => {
   const nav = useNavigate();
   //
   return (
-    <ColumnFlexDiv>
-      <br />
-      <input name="user_id" autoComplete="off" ref={(el) => (loginData.current.user_id = el)} />
-      <br />
-      <input name="password" autoComplete="off" ref={(el) => (loginData.current.password = el)} />
-      <br />
-      <button onClick={loginFn}>로그인</button>
-      <br />
-    </ColumnFlexDiv>
+    <>
+      <TitleP>로그인</TitleP>
+      <ColumnFlexDiv>
+        <br />
+        <Label htmlFor="user_id">아이디</Label>
+        <input id="user_id" name="user_id" autoComplete="off" ref={(el) => (loginData.current.user_id = el)} />
+        <br />
+        <Label htmlFor="password">비밀번호</Label>
+        <input id="password" name="password" type="password" autoComplete="off" ref={(el) => (loginData.current.password = el)} />
+        <br />
+        <Button onClick={loginFn}>로그인</Button>
+        <br />
+      </ColumnFlexDiv>
+    </>
   );
+  //
+  ////////////////////
   function loginFn() {
     //
+    let isNull = false;
     const _loginData = {};
     const toMainPageFn = () => nav("/");
     //
@@ -32,9 +40,16 @@ const Login = () => {
         //
         const el = loginData.current[key];
         //
+        if (el.value === "") {
+          //
+          isNull = true;
+          return;
+        }
         _loginData[key] = el.value;
       }
     }
+    if (isNull) return;
+    //
     dispatch(login_action(_loginData, toMainPageFn));
   }
 };

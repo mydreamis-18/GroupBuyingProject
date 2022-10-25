@@ -23,17 +23,9 @@ const TitleP = styled.p`
   font-size: 3vw;
   margin: 1vw 0;
 `;
-const HeaderSpan = styled.span`
-  font-weight: 900;
-  font-size: 4vw;
-`;
-const Span = styled.span`
-  text-align: center;
-  font-size: 1.5vw;
-  width: 15vw;
-`;
-const AddProductImg = styled.img`
-  width: 10vw;
+const LeftP = styled.p`
+  font-size: 3vw;
+  margin: 1vw 0;
 `;
 const LoadingMsgP = styled.p`
   text-align: center;
@@ -41,7 +33,42 @@ const LoadingMsgP = styled.p`
   margin-top: 40vh;
   font-size: 10vh;
 `;
+const HeaderSpan = styled.span`
+  font-weight: 900;
+  font-size: 4vw;
+`;
+const SmallSpan = styled.span`
+  text-align: center;
+  font-size: 1.5vw;
+  width: 15vw;
+`;
+const LargeSpan = styled.span`
+  text-align: center;
+  font-size: 1.5vw;
+  width: 60vw;
+`;
+const Label = styled.label`
+  font-size: 3vw;
+  padding: 1vw;
+`;
 const Button = styled.button`
+  padding: 0.5vw;
   margin: 0 1vw;
 `;
-export { ColumnFlexDiv, RowFlexDiv, TitleP, HeaderSpan, Span, AddProductImg, LoadingMsgP, Button };
+const AddProductImg = styled.img`
+  width: 10vw;
+`;
+export {
+  //
+  ColumnFlexDiv,
+  AddProductImg,
+  LoadingMsgP,
+  RowFlexDiv,
+  HeaderSpan,
+  LargeSpan,
+  SmallSpan,
+  Button,
+  TitleP,
+  LeftP,
+  Label,
+};

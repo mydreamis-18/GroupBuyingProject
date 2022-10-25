@@ -1,5 +1,6 @@
 const init = {
   //
+  isProductDataReady: false,
   products: new Array(0),
   isLoadingPage: true,
   isDefaultImg: true,
@@ -9,20 +10,25 @@ const init = {
 };
 function reducer(state = init, action) {
   //
-  const { products, isLoadingPage, isDefaultImg, productsLength, productsIdx } = state;
+  const { isProductDataReady, isLoadingPage, products, productsLength, productsIdx } = state;
   const { type, payload } = action;
   let newIdx = null;
   switch (type) {
     //
     ///////////////////////
-    case "GET_ALL_PRODUCTS":
-      // console.log("1");
-      console.log("[ COMPLETE ] GET_ALL_PRODUCTS", products);
-      return { ...state, products: payload, productsLength: payload.length };
+    case "LOADINGPAGE_ON":
+      state.isLoadingPage = true;
+      return state;
     //
     ///////////////////////
     case "LOADINGPAGE_OFF":
       return { ...state, isLoadingPage: false };
+    //
+    ////////////////////////
+    case "GET_ALL_PRODUCTS":
+      // console.log("1");
+      console.log("GET_ALL_PRODUCTS", products);
+      return { ...state, products: payload, productsLength: payload.length, isProductDataReady: true };
     //
     ///////////////////
     case "ADD_PRODUCT":

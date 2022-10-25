@@ -1,4 +1,4 @@
-const { User, Product } = require("../model");
+const { User, Product, BuyNowTransaction, BuyTogetherTransaction, Notification } = require("../model");
 const jwt = require("jsonwebtoken");
 //
 //////////////////////////////////////
@@ -32,21 +32,52 @@ function issueRefreshTokenFn(user_id) {
   );
 }
 //
+/////////////////////////////////////
+async function getUserDataFn(user_id) {
+  //
+  let userData = await User.findOne({
+    where: { user_id },
+    attributes: ["id", "nickname", "points"],
+    include: [
+      {
+        model: BuyNowTransaction,
+        attributes: ["is_refund", "created_at", "updated_at"],
+        include: [{ model: Product, attributes: ["id", "name", "price"] }],
+      },
+      {
+        model: BuyTogetherTransaction,
+        attributes: ["is_refund", "created_at", "updated_at"],
+        include: [{ model: Product, attributes: ["id", "name", "price"] }],
+      },
+      {
+        model: Notification,
+        attributes: ["message", "created_at"],
+      },
+    ],
+  });
+  userData = { ...userData.dataValues };
+  userData.Notifications = userData.Notifications.map((el) => el.dataValues);
+  userData.BuyNowTransactions = userData.BuyNowTransactions.map((el) => el.dataValues);
+  userData.BuyTogetherTransactions = userData.BuyTogetherTransactions.map((el) => el.dataValues);
+  userData.BuyNowTransactions = userData.BuyNowTransactions.map((el) => ({ ...el, Product: el.Product.dataValues, type: "바로 구매" }));
+  userData.BuyTogetherTransactions = userData.BuyTogetherTransactions.map((el) => ({ ...el, Product: el.Product.dataValues, type: "공동 구매" }));
+  return userData;
+}
 ///////////////////////////////////////////////////////
 async function verifyTokensMiddleware(req, res, next) {
   //
-  console.log("verifyTokensMiddleware");
+  console.log("verifyTokensMiddleware", "미들웨어에서는 DB상 회원의 id 값을 다루지 않을 예정");
   //
   const { access_token, refresh_token } = req.body;
   //
   const verifyAccessToken = await verifyTokenFn(access_token, process.env.ACCESS_TOKEN_SECRET);
   if (verifyAccessToken.isValid) {
     //
-    const user_id = verifyAccessToken.decode.user_id;
-    //
-    let userNum = await User.findOne({ where: { user_id }, attributes: ["id"] });
-    userNum = userNum.dataValues.id;
-    req.userNum = userNum;
+    if (req.path === "/verifyTokens") {
+      //
+      const user_id = verifyAccessToken.decode.user_id;
+      req.user_id = user_id;
+    }
     next();
     return;
   }
@@ -57,15 +88,18 @@ async function verifyTokensMiddleware(req, res, next) {
     return;
   }
   const user_id = verifyRefreshToken.decode.user_id;
-  const { isSame, userNum } = await isSameRefreshTokenFn(user_id, refresh_token);
+  const isSame = await isSameRefreshTokenFn(user_id, refresh_token);
   if (isSame) {
     //
     const newAccessToken = issueAccessTokenFn(user_id);
     req.newAccessToken = newAccessToken;
-    req.userNum = userNum;
     //
     // req = { ...req, newAccessToken }; // 안 됨
     //
+    if (req.path === "/verifyTokens") {
+      //
+      req.user_id = user_id;
+    }
     next();
     return;
   }
@@ -125,15 +159,12 @@ async function isSameRefreshTokenFn(user_id, refresh_token) {
   //
   if (tokenInDB === null) {
     //
-    return { isSame: false };
+    return false;
   }
-  const isSame = refresh_token === tokenInDB.dataValues.refresh_token;
-  const { id } = tokenInDB.dataValues;
-  //
-  return { isSame, userNum: id };
+  return refresh_token === tokenInDB.dataValues.refresh_token;
 }
 //
-///////////////////////////////////////
+///////////////////////////////////////////////////
 async function findTransactionFn(model, id, type) {
   //
   const result = await model.findOne({ where: { id: id }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
@@ -141,15 +172,14 @@ async function findTransactionFn(model, id, type) {
   return { ...result.dataValues, Product: { ...result.Product.dataValues, type } };
 }
 //
-///////////////////////////////////////
-async function findTransactionsFn(model, userNum, type) {
+/////////////////////////////////////////////////////
+async function createNotification(userNum, message) {
   //
-  let result = await model.findAll({ where: { user_id_fk: userNum }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
-  if (result.length !== 0) {
-    //
-    result = result.map((el) => ({ ...el.dataValues, Product: { ...el.dataValues.Product.dataValues, type } }));
-  }
-  return result;
+  let newNotificationId = await Notification.create({ user_id_fk: userNum, message });
+  newNotificationId = newNotificationId.dataValues.id;
+  //
+  const newNotification = await Notification.findOne({ where: { id: newNotificationId }, attributes: ["message", "created_at"] });
+  return newNotification.dataValues;
 }
 //
 ////////////////////////////////////////
@@ -164,8 +194,9 @@ module.exports = {
   isSameRefreshTokenFn,
   issueRefreshTokenFn,
   issueAccessTokenFn,
-  findTransactionsFn,
+  createNotification,
   findTransactionFn,
   changeToRefundFn,
   verifyTokenFn,
+  getUserDataFn,
 };

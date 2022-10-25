@@ -1,4 +1,4 @@
-import { ColumnFlexDiv, TitleP, AddProductImg } from "../styledComponent";
+import { ColumnFlexDiv, TitleP, Label, Button, AddProductImg } from "../styledComponent";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { addProduct_action } from "../redux/middleware";
 import { useState, useEffect, useRef } from "react";
@@ -77,32 +77,32 @@ const InputProduct = (props) => {
   return (
     <ColumnFlexDiv>
       <TitleP>{pageName === "add" ? "상품 등록" : "상품 정보 수정"}</TitleP>
-      <label>상품명 </label>
+      <Label>상품명 </Label>
       <input name="name" autoComplete="false" ref={(el) => (newProduct.current.name = el)} />
       <br />
-      <label>상품 설명 </label>
+      <Label>상품 설명 </Label>
       <input name="content" autoComplete="false" ref={(el) => (newProduct.current.content = el)} />
       <br />
-      <label>상품 이미지 </label>
+      <Label>상품 이미지 </Label>
       <input name="img" type="file" accept="image/*" style={{ transform: "translateX(2vw)" }} onChange={(e) => imgChangeFn(e.target.files[0])} />
       <br />
       <AddProductImg src={isNewImg ? URL.createObjectURL(img) : isDefaultImg ? require("../img/default.PNG") : img} alt="" />
       <br />
-      <label>재고 수량 </label>
+      <Label>재고 수량 </Label>
       <input name="quantity" type="number" min={"0"} autoComplete="false" ref={(el) => (newProduct.current.quantity = el)} />
       <br />
-      <label>즉시 구매가 </label>
+      <Label>즉시 구매가 </Label>
       <input name="price" type="number" step={"1000"} min={"0"} autoComplete="false" ref={(el) => (newProduct.current.price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
-      <label>공동 구매가 </label>
+      <Label>공동 구매가 </Label>
       <input name="discount_price" type="number" step={"1000"} min={"0"} autoComplete="false" ref={(el) => (newProduct.current.discount_price = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
-      <label>공동 구매 할인율 (%) </label>
+      <Label>공동 구매 할인율 (%) </Label>
       <input name="discount_rate" type="number" step={"10"} min={"0"} max={"100"} autoComplete="false" ref={(el) => (newProduct.current.discount_rate = el)} onClick={(e) => autoCalculationFn(e)} onBlur={(e) => autoCalculationFn(e)} />
       <br />
       <DatePicker stateArr={[startDate, setStartDate, endDate, setEndDate]} fn={[toZeroSecondFn]} />
       <br />
-      <button onClick={pageName === "add" ? addProductFn : editProductFn}>{pageName === "add" ? "상품 등록하기" : "상품 정보 수정하기"}</button>
+      <Button onClick={pageName === "add" ? addProductFn : editProductFn}>{pageName === "add" ? "상품 등록하기" : "상품 정보 수정하기"}</Button>
       <br />
     </ColumnFlexDiv>
   );

@@ -1,4 +1,5 @@
 import "react-datepicker/dist/react-datepicker.css";
+import { Label } from "../styledComponent";
 import DatePicker from "react-datepicker";
 //
 const _DatePicker = (props) => {
@@ -9,10 +10,10 @@ const _DatePicker = (props) => {
   // ㅜ onChange() 함수와 state 값을 사용하지 않으면 값이 변동되지 않음
   return (
     <>
-      <label>공동 구매 시작 시각 </label>
+      <Label>공동 구매 시작 시각 </Label>
       <DatePicker selected={startDate} onChange={(date) => dateValidationFn(date, "start")} minDate={toZeroSecondFn(new Date())} timeInputLabel="Time:" dateFormat="yyyy년 MM월 dd일 h:mm aa" showTimeInput />
       <br />
-      <label>공동 구매 종료 시각 </label>
+      <Label>공동 구매 종료 시각 </Label>
       <DatePicker selected={endDate} onChange={(date) => dateValidationFn(date, "end")} minDate={startDate} timeInputLabel="Time:" dateFormat="yyyy년 MM월 dd일 h:mm aa" showTimeInput />
     </>
   );

@@ -11,24 +11,24 @@ function reducer(state = init, action) {
   switch (type) {
     //
     ////////////////////////
-    case "ADD_TRANSACTIONS":
+    case "SAVE_TRANSACTIONS":
       //
-      const { buyNowTransactions, buyTogetherTransactions } = payload;
-      if (buyNowTransactions.length === 0 && buyTogetherTransactions.length === 0) {
+      const { BuyNowTransactions, BuyTogetherTransactions } = payload;
+      if (BuyNowTransactions.length === 0 && BuyTogetherTransactions.length === 0) {
       }
       //
-      else if (buyNowTransactions.length === 0) {
+      else if (BuyNowTransactions.length === 0) {
         //
-        state.transactions = buyTogetherTransactions;
+        state.transactions = BuyTogetherTransactions;
       }
       //
-      else if (buyTogetherTransactions.length === 0) {
+      else if (BuyTogetherTransactions.length === 0) {
         //
-        state.transactions = buyNowTransactions;
+        state.transactions = BuyNowTransactions;
       }
       //
       else {
-        _transactions = buyNowTransactions.concat(buyTogetherTransactions);
+        _transactions = BuyNowTransactions.concat(BuyTogetherTransactions);
         _transactions.sort((a, b) => {
           //
           if (a.created_at > b.created_at) return 1;
@@ -47,7 +47,7 @@ function reducer(state = init, action) {
     case "REFUND":
       _transactions = transactions.map((el) => {
         //
-        const isTransition = el.Product.type === payload.type && el.Product.id === payload.productNum && el.created_at === payload.created_at;
+        const isTransition = el.type === payload.type && el.Product.id === payload.productNum && el.created_at === payload.created_at;
         if (isTransition) {
           //
           return { ...el, is_refund: true, updated_at: payload.updated_at };
@@ -55,9 +55,6 @@ function reducer(state = init, action) {
         return el;
       });
       return { ...state, transactions: _transactions };
-    //
-    case "":
-      return state;
     //
     default:
       return state;
