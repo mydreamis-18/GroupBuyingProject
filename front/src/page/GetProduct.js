@@ -14,13 +14,19 @@ const GetProduct = () => {
     }),
     shallowEqual
   );
+  const { isLogin, isAdmin } = useSelector(
+    (state) => ({
+      isLogin: state.user_reducer.isLogin,
+      isAdmin: state.user_reducer.isAdmin,
+    }),
+    shallowEqual
+  );
   const nav = useNavigate();
   const dispatch = useDispatch();
   const product = products[productsIdx];
   const [tense, setTense] = useState(null);
   const [isProduct, setIsProduct] = useState(false);
   const [DDayInterval, setDDayInterval] = useState(null);
-  const isLogin = useSelector((state) => state.user_reducer.isLogin);
   const [DDay, setDDay] = useState(product === undefined ? "" : getDDayFn);
   //
   console.log("interval");
@@ -61,24 +67,17 @@ const GetProduct = () => {
   }, [productsIdx]);
   //
   return (
-    <div style={{ border: "1px solid black", margin: "10vw", padding: "2vw" }}>
+    <div style={{ border: "1px solid black", margin: "0 10vw", padding: "2vw" }}>
       {isProduct ? (
         <>
           <img src={isDefaultImg ? require("../img/default.PNG") : "서버 주소" + product.img_path} alt="이미지" />
           <LeftP>상품명: {product.name}</LeftP>
-          <br />
           <LeftP>상품 설명: {product.content}</LeftP>
-          <br />
           <LeftP>{DDay}</LeftP>
-          <br />
           <LeftP>바로 구매가: {product.price}원</LeftP>
-          <br />
           <LeftP>공동 구매가: {product.discount_price}원</LeftP>
-          <br />
           <LeftP>현재 공동 구매자: 명</LeftP>
-          <br />
           <LeftP>잔여 수량: {product.quantity}개</LeftP>
-          <br />
           <div style={{ display: "flex" }}>
             <Button style={{ marginLeft: "0" }} onClick={prevProductFn}>
               이전 상품
@@ -92,6 +91,7 @@ const GetProduct = () => {
             ) : (
               <></>
             )}
+            {isAdmin ? <Button onClick={() => nav("/editProduct")}>상품 수정하기</Button> : <></>}
           </div>
         </>
       ) : (

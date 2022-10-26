@@ -1,9 +1,9 @@
 const { issueAccessTokenFn, issueRefreshTokenFn, getUserDataFn, verifyTokensMiddleware } = require("../service");
 const { User, Notification } = require("../model");
+const SALT = Number(process.env.BCRYPT_SALT);
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const SALT = 10;
 //
 ////////////////////////////////////////////
 router.post("/signUp", async (req, res) => {
@@ -73,9 +73,11 @@ router.post("/updateMyData", verifyTokensMiddleware, async (req, res) => {
 });
 //
 ////////////////////////////////////////////////////////////////////
-router.post("/verifyTokens", verifyTokensMiddleware, async (req, res) => {
+router.post("/refreshPage", verifyTokensMiddleware, async (req, res) => {
   //
   const { user_id, newAccessToken } = req;
+  console.log("refreshPage", user_id);
+  //
   const userData = await getUserDataFn(user_id);
   //
   res.send({ isSuccess: true, newAccessToken, userData });

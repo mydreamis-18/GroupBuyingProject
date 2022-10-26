@@ -35,9 +35,29 @@ function reducer(state = init, action) {
       return { ...state, products: [...products, payload], productsLength: productsLength + 1 };
     //
     /////////////////////
-    case "DELETE_PRODUCT":
-      // 미구현
-      return { ...state, products: payload };
+    case "EDIT_PRODUCT":
+      //
+      state.products.forEach((el, idx) => {
+        //
+        const { updateData } = payload;
+        if (updateData.id === el.id) {
+          //
+          delete updateData.id;
+          for (const key in updateData) {
+            //
+            if (Object.hasOwnProperty.call(updateData, key)) {
+              //
+              const value = updateData[key];
+              //
+              el[key] = value;
+            }
+          }
+          return;
+        }
+      });
+      console.log(state);
+      payload.toMainPageFn();
+      return state;
     //
     ////////////////////////
     case "PLUS_PRODUCTS_IDX":

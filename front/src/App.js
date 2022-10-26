@@ -1,37 +1,72 @@
-import { Loading, GetProduct, AddProduct, EditProduct, SignUp, Login, MyPage, MyData, MyTransactions, Temp } from "./page";
-import { getAllProducts_action, verifyTokens_action } from "./redux/middleware";
+import { Loading, GetProduct, AddProduct, EditProduct, SignUp, Login, MyPage, MyData, MyTransactions, Admin, Temp } from "./page";
+import { getAllProducts_action, refreshPage_action } from "./redux/middleware";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { Header } from "./component";
+import { Header, AdminHeader } from "./component";
+import { useState, useEffect } from "react";
+import { HeaderLineDiv } from "./styledComponent";
+import axios from "axios";
 //
 // addProduct 페이지에 대해서 관리자만 접근 가능하게 설정해야 함!
 //
 function App() {
   //
-  const nav = useNavigate();
+  const { isLoadingPage, isProductDataReady } = useSelector(
+    (state) => ({
+      isLoadingPage: state.product_reducer.isLoadingPage,
+      isProductDataReady: state.product_reducer.isProductDataReady,
+    }),
+    shallowEqual
+  );
+  //
+  const { isUserDataReady, isAdmin, userNum } = useSelector(
+    (state) => ({
+      isUserDataReady: state.user_reducer.isUserDataReady,
+      isAdmin: state.user_reducer.isAdmin,
+      userNum: state.user_reducer.userNum,
+    }),
+    shallowEqual
+  );
+  //
+  const [adminId, setAdminId] = useState();
   const dispatch = useDispatch();
-  const isLoadingPage = useSelector((state) => state.product_reducer.isLoadingPage);
-  const isUserDataReady = useSelector((state) => state.user_reducer.isUserDataReady);
-  const isProductDataReady = useSelector((state) => state.product_reducer.isProductDataReady);
+  const nav = useNavigate();
   //
   useEffect(() => {
     //
-    const toLoginPageFn = () => nav("/login");
-    //
-    dispatch(verifyTokens_action(toLoginPageFn));
     dispatch(getAllProducts_action());
+    //
+    const toLoginPageFn = () => nav("/login");
+    dispatch(refreshPage_action(toLoginPageFn));
+    //
+    (async () => {
+      //
+      const adminAccountId = await axios({ url: "http://localhost:8000", method: "post" });
+      setAdminId(adminAccountId.data.adminAccountId);
+    })();
   }, []);
   //
-  console.log("isUserDataReady:", isUserDataReady, ", isProductDataReady", isProductDataReady);
+  useEffect(() => {
+    //
+    if (userNum !== undefined && userNum === adminId) {
+      //
+      dispatch({ type: "ADMIN_LOGIN" });
+    }
+  }, [userNum]);
+  //
   if (isLoadingPage && isUserDataReady && isProductDataReady) {
     //
     setTimeout(() => dispatch({ type: "LOADINGPAGE_OFF" }), 2000);
   }
+  console.log("isUserDataReady:", isUserDataReady, ", isProductDataReady", isProductDataReady);
+  //
   return (
     <div className="App">
       <Header />
+      {isAdmin ? <AdminHeader></AdminHeader> : <></>}
+      <HeaderLineDiv></HeaderLineDiv>
       <Routes>
+        <Route path="/admin" element={<Admin />} />
         <Route path="/myPage" element={<MyPage />} />
         <Route path="/myData" element={<MyData />} />
         <Route path="/addProduct" element={<AddProduct />} />
@@ -49,5 +84,6 @@ function App() {
     //
     return isLoadingPage ? <Loading /> : page;
   }
+  //
 }
 export default App;

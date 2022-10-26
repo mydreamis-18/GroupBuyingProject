@@ -1,3 +1,4 @@
+const { verifyTokensMiddleware, fileFilter, editProductFn } = require("../service");
 const { Product } = require("../model");
 const express = require("express");
 const router = express.Router();
@@ -6,7 +7,6 @@ const router = express.Router();
 // ㅜ 업로드 이미지 파일을 DB에 저장하기 위해 필요한 multer 모듈
 const path = require("path");
 const multer = require("multer");
-//
 const storage = multer.diskStorage({
   //
   destination: function (req, file, cb) {
@@ -27,6 +27,14 @@ router.post("/getAllProducts", (req, res) => {
   Product.findAll().then((obj) => res.send(obj));
 });
 //
+////////////////////////////////////////////////////////////////////
+router.post("/verifyTokens", verifyTokensMiddleware, async (req, res) => {
+  //
+  const { newAccessToken } = req;
+  //
+  res.send({ isSuccess: true, newAccessToken });
+});
+//
 ////////////////////////////////////////////////
 //    10.14.20
 // 1. DB에 같은 이름의 데이터가 있는 지 확인한 다음
@@ -38,18 +46,6 @@ router.post("/addProduct/formData", (req, res) => {
   // console.log(req.body.img); // undefined // formData() 객체를 사용하지 않으면 {}
   // console.log(req.body.start_date); // axiois before (object) 값과는 다른 값이군... '2022-10-12T05:35:18.107Z' (string)
   //
-  const fileFilter = (req, file, cb) => {
-    //
-    const { name } = req.body;
-    //
-    Product.findOne({ where: { name } }).then((obj) => {
-      //
-      if (obj === null) cb(null, true);
-      else {
-        cb("같은 이름의 상품이 이미 등록되어 있습니다.", false);
-      }
-    });
-  };
   const addProductMulter = multer({ storage, fileFilter }).single("img");
   addProductMulter(req, res, (err) => {
     //
@@ -63,6 +59,38 @@ router.post("/addProduct/formData", (req, res) => {
       res.send({ isSuccess: true, alertMsg: "상품이 등록되었습니다.", newProduct: obj.dataValues });
     });
   });
+});
+//
+////////////////////////////////////////////////////
+router.post("/editProduct/formData", async (req, res) => {
+  //
+  const addProductMulter = multer({ storage, fileFilter }).single("img");
+  addProductMulter(req, res, (err) => {
+    //
+    if (err) {
+      //
+      res.send({ isSuccess: false, alertMsg: err });
+      return;
+    }
+    editProductFn(req.body, res);
+  });
+});
+//
+///////////////////////////////////////////
+router.post("/editProduct", (req, res) => {
+  //
+  if (req.body.name !== undefined) {
+    //
+    Product.findOne({ where: { name: req.body.name } }).then((obj) => {
+      if (obj !== null) {
+        //
+        res.send({ isSuccess: false, alertMsg: "같은 이름의 상품이 이미 등록되어 있습니다." });
+        return;
+      }
+    });
+  }
+  //
+  else editProductFn(req.body, res);
 });
 //
 module.exports = router;

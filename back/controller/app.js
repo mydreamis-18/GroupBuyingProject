@@ -35,7 +35,7 @@ app.use(express.json());
 //
 ///////////////////////////
 // ㅜ 서버 실행 시 MySQL 연동
-const { sequelize } = require("../model");
+const { sequelize, User } = require("../model");
 sequelize.sync({ force: false }).then(() => console.log("MySQL"));
 //
 /////////////////////////////////////////
@@ -55,3 +55,24 @@ const { userRouter, productRouter, transactionRouter } = require(".");
 app.use("/", transactionRouter);
 app.use("/", productRouter);
 app.use("/", userRouter);
+//
+/////////////////////
+// ㅜ 관리자 계정 생성
+const bcrypt = require("bcrypt");
+app.post("/", async (req, res) => {
+  //
+  let adminAccountId = null;
+  const admin = "admin";
+  const SALT = Number(process.env.BCRYPT_SALT);
+  //
+  adminAccountId = await User.findOne({ where: { user_id: admin }, attributes: ["id"] });
+  if (adminAccountId === null) {
+    //
+    const password = process.env.ADMIN_ACCOUNT_PASSWORD;
+    const _password = await bcrypt.hash(password, SALT);
+    //
+    adminAccountId = await User.create({ user_id: admin, nickname: admin, password: _password });
+  }
+  adminAccountId = adminAccountId.dataValues.id;
+  res.send({ adminAccountId });
+});

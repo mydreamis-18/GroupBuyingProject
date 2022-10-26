@@ -1,4 +1,4 @@
-import { ColumnFlexDiv, TitleP, Label, Button } from "../styledComponent";
+import { ColumnFlexDiv, TitleP, BigLabel, Button } from "../styledComponent";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import axios from "axios";
@@ -13,13 +13,13 @@ const SignUp = () => {
       <TitleP>회원 가입</TitleP>
       <ColumnFlexDiv>
         <br />
-        <Label htmlFor="nickname">닉네임</Label>
+        <BigLabel htmlFor="nickname">닉네임</BigLabel>
         <input id="nickname" name="nickname" autoComplete="off" ref={(el) => (inputData.current.nickname = el)} />
         <br />
-        <Label htmlFor="user_id">아이디</Label>
+        <BigLabel htmlFor="user_id">아이디</BigLabel>
         <input id="user_id" name="user_id" autoComplete="off" ref={(el) => (inputData.current.user_id = el)} />
         <br />
-        <Label htmlFor="password">비밀번호</Label>
+        <BigLabel htmlFor="password">비밀번호</BigLabel>
         <input id="password" name="password" type="password" autoComplete="off" ref={(el) => (inputData.current.password = el)} />
         <br />
         <Button onClick={signUp}>가입하기</Button>

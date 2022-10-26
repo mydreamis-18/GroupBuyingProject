@@ -22,16 +22,19 @@ export const getAllProducts_action = () => {
   };
 };
 //
-////////////////////////////////////////////////
-export const addProduct_action = (formData) => {
+///////////////////////////////////////////////////////////////
+export const addProduct_action = (formData, toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
+    const _isSuccess = await verifyTokens(_dispatch, toLoginPageFn);
+    if (!_isSuccess) return;
+    //
     const _addProduct_action = await axios({
       //
-      url: "http://localhost:8000/addProduct/formData",
-      method: "post",
       data: formData,
+      method: "post",
+      url: "http://localhost:8000/addProduct/formData",
     });
     const { isSuccess, alertMsg, newProduct } = _addProduct_action.data;
     if (isSuccess) {
@@ -42,17 +45,46 @@ export const addProduct_action = (formData) => {
   };
 };
 //
-/////////////////////////////////////////////////////
-export const deleteProduct_action = (product_id) => {
+///////////////////////////////////////////////////////////////////
+export const editProduct_action = (_updateData, path, toMainPageFn, toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
-    const _deleteProduct_action = await axios({
-      url: `http://localhost:8000/deleteProduct/${product_id}`,
-      method: "post",
-    });
-    console.log(_deleteProduct_action.data);
+    const _isSuccess = await verifyTokens(_dispatch, toLoginPageFn);
+    if (!_isSuccess) return;
     //
-    _dispatch({ type: "DELETE_PRODUCT", payload: _deleteProduct_action.data });
+    const _editProduct_action = await axios({
+      //
+      method: "post",
+      data: _updateData,
+      url: `http://localhost:8000/editProduct${path}`,
+    });
+    const { isSuccess, alertMsg, updateData } = _editProduct_action.data;
+    if (isSuccess) {
+      //
+      _dispatch({ type: "EDIT_PRODUCT", payload: { updateData, toMainPageFn } });
+    }
+    alert(alertMsg);
   };
 };
+//
+///////////////////////////////////////////////////////
+async function verifyTokens(_dispatch, toLoginPageFn) {
+  //
+  const { access_token, refresh_token } = sessionStorage;
+  const verifyTokens = await axios({
+    //
+    url: "http://localhost:8000/verifyTokens",
+    data: { access_token, refresh_token },
+    method: "post",
+  });
+  const { isSuccess, newAccessToken } = verifyTokens.data;
+  if (isSuccess) {
+    //
+    _dispatch({ type: "IS_NEW_ACCESS_TOKEN", payload: newAccessToken });
+  }
+  //
+  else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
+  //
+  return isSuccess;
+}

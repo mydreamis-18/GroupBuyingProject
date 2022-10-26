@@ -1,4 +1,4 @@
-import { ColumnFlexDiv, TitleP, Label, Button } from "../styledComponent";
+import { ColumnFlexDiv, TitleP, BigLabel, Button } from "../styledComponent";
 import { login_action } from "../redux/middleware";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -15,10 +15,10 @@ const Login = () => {
       <TitleP>로그인</TitleP>
       <ColumnFlexDiv>
         <br />
-        <Label htmlFor="user_id">아이디</Label>
+        <BigLabel htmlFor="user_id">아이디</BigLabel>
         <input id="user_id" name="user_id" autoComplete="off" ref={(el) => (loginData.current.user_id = el)} />
         <br />
-        <Label htmlFor="password">비밀번호</Label>
+        <BigLabel htmlFor="password">비밀번호</BigLabel>
         <input id="password" name="password" type="password" autoComplete="off" ref={(el) => (loginData.current.password = el)} />
         <br />
         <Button onClick={loginFn}>로그인</Button>

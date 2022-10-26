@@ -1,4 +1,4 @@
-import { ColumnFlexDiv, TitleP, Label, Button } from "../styledComponent";
+import { ColumnFlexDiv, TitleP, BigLabel, Button } from "../styledComponent";
 import { updateMyData_action } from "../redux/middleware";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,7 @@ const MyData = () => {
       <TitleP>회원 정보 수정</TitleP>
       <ColumnFlexDiv>
         <br />
-        <Label htmlFor="nickname">닉네임</Label>
+        <BigLabel htmlFor="nickname">닉네임</BigLabel>
         <input
           id="nickname"
           name="nickname"

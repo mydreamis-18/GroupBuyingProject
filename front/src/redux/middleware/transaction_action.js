@@ -15,9 +15,9 @@ export const buy_action = (type, toLoginPageFn) => {
     const { userNum } = getState().user_reducer;
     const _buy_action = await axios({
       //
-      data: { userNum, type, id, name, productPoints, newPoints, access_token, refresh_token },
-      url: "http://localhost:8000/buy",
       method: "post",
+      url: "http://localhost:8000/buy",
+      data: { userNum, type, id, name, productPoints, newPoints, access_token, refresh_token },
     });
     const { isSuccess, alertMsg, newAccessToken, newTransition, newNotification } = _buy_action.data;
     if (isSuccess) {
@@ -34,7 +34,7 @@ export const buy_action = (type, toLoginPageFn) => {
   };
 };
 //
-/////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 export const refund_action = (type, productNum, name, price, created_at, toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
@@ -47,9 +47,9 @@ export const refund_action = (type, productNum, name, price, created_at, toLogin
     const { userNum } = getState().user_reducer;
     const _refund_action = await axios({
       //
-      data: { userNum, type, productNum, name, created_at, productPoints, newPoints, access_token, refresh_token },
-      url: "http://localhost:8000/refund",
       method: "post",
+      url: "http://localhost:8000/refund",
+      data: { userNum, type, productNum, name, created_at, productPoints, newPoints, access_token, refresh_token },
     });
     const { isSuccess, alertMsg, newAccessToken, updated_at, newNotification } = _refund_action.data;
     if (isSuccess) {

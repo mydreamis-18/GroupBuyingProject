@@ -8,6 +8,7 @@ import MyPage from "./MyPage";
 import MyData from "./MyData";
 import SignUp from "./SignUp";
 import Login from "./Login";
+import Admin from "./Admin";
 //
 export {
   //
@@ -20,5 +21,6 @@ export {
   MyPage,
   MyData,
   Login,
+  Admin,
   Temp,
 };

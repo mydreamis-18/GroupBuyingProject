@@ -1,6 +1,6 @@
 import axios from "axios";
 //
-//////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 export const login_action = (loginData, toMainPageFn) => {
   //
   return async (_dispatch, getState) => {
@@ -35,7 +35,7 @@ export const login_action = (loginData, toMainPageFn) => {
   };
 };
 //
-////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 export const updateMyData_action = (nickname, toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
@@ -44,11 +44,10 @@ export const updateMyData_action = (nickname, toLoginPageFn) => {
     const { userNum } = getState().user_reducer;
     const _updateMyData_action = await axios({
       //
-      data: { userNum, nickname, access_token, refresh_token },
-      url: "http://localhost:8000/updateMyData",
       method: "post",
+      url: "http://localhost:8000/updateMyData",
+      data: { userNum, nickname, access_token, refresh_token },
     });
-    console.log(_updateMyData_action.data);
     const { isSuccess, alertMsg, newAccessToken } = _updateMyData_action.data;
     if (isSuccess) {
       //
@@ -63,7 +62,7 @@ export const updateMyData_action = (nickname, toLoginPageFn) => {
 };
 //
 ///////////////////////////////////////////////////////
-export const verifyTokens_action = (toLoginPageFn) => {
+export const refreshPage_action = (toLoginPageFn) => {
   //
   return async (_dispatch, getState) => {
     //
@@ -73,13 +72,13 @@ export const verifyTokens_action = (toLoginPageFn) => {
       _dispatch({ type: "USER_DATA_IS_READY" });
       return;
     }
-    const _verifyTokens_action = await axios({
+    const _refreshPage_action = await axios({
       //
-      url: "http://localhost:8000/verifyTokens",
-      data: { access_token, refresh_token },
       method: "post",
+      data: { access_token, refresh_token },
+      url: "http://localhost:8000/refreshPage",
     });
-    const { isSuccess, newAccessToken, userData } = _verifyTokens_action.data;
+    const { isSuccess, newAccessToken, userData } = _refreshPage_action.data;
     if (isSuccess) {
       //
       saveUserDataFn(_dispatch, userData);

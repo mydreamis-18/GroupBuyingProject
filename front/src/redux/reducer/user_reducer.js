@@ -4,12 +4,13 @@ const init = {
   userNum: null,
   isLogin: false,
   nickname: null,
+  isAdmin: false,
   isUserDataReady: false,
   notifications: new Array(0),
 };
 function reducer(state = init, action) {
   //
-  const { isUserDataReady, isLogin, userNum, nickname, points, notifications } = state;
+  const { isUserDataReady, isLogin, isAdmin, userNum, nickname, points, notifications } = state;
   const { type, payload } = action;
   switch (type) {
     //
@@ -22,6 +23,16 @@ function reducer(state = init, action) {
     case "USER_DATA_IS_READY":
       return { ...state, isUserDataReady: true };
     //
+    ///////////////////
+    case "ADMIN_LOGIN":
+      state.isAdmin = true;
+      return state;
+    //
+    ///////////////////
+    case "ADMIN_LOGOUT":
+      state.isAdmin = false;
+      return state;
+    //
     /////////////
     case "LOGIN":
       state.nickname = payload.nickname;
@@ -32,6 +43,7 @@ function reducer(state = init, action) {
     //////////////
     case "LOGOUT":
       const moveToPageFn = payload;
+      console.log(payload);
       //
       sessionStorage.removeItem("access_token");
       sessionStorage.removeItem("refresh_token");

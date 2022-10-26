@@ -73,9 +73,10 @@ async function verifyTokensMiddleware(req, res, next) {
   const verifyAccessToken = await verifyTokenFn(access_token, process.env.ACCESS_TOKEN_SECRET);
   if (verifyAccessToken.isValid) {
     //
-    if (req.path === "/verifyTokens") {
+    if (req.path === "/refreshPage") {
       //
       const user_id = verifyAccessToken.decode.user_id;
+      console.log("accessToken", user_id);
       req.user_id = user_id;
     }
     next();
@@ -88,6 +89,8 @@ async function verifyTokensMiddleware(req, res, next) {
     return;
   }
   const user_id = verifyRefreshToken.decode.user_id;
+  console.log("refreshToken", user_id);
+  //
   const isSame = await isSameRefreshTokenFn(user_id, refresh_token);
   if (isSame) {
     //
@@ -96,7 +99,7 @@ async function verifyTokensMiddleware(req, res, next) {
     //
     // req = { ...req, newAccessToken }; // 안 됨
     //
-    if (req.path === "/verifyTokens") {
+    if (req.path === "/refreshPage") {
       //
       req.user_id = user_id;
     }
@@ -155,21 +158,14 @@ async function verifyTokenFn(token, secretKey) {
 /////////////////////////////////////////////////////////////
 async function isSameRefreshTokenFn(user_id, refresh_token) {
   //
-  const tokenInDB = await User.findOne({ where: { user_id }, attributes: ["id", "refresh_token"] });
+  console.log("isSame", user_id);
+  const tokenInDB = await User.findOne({ where: { user_id }, attributes: ["refresh_token"] });
   //
   if (tokenInDB === null) {
     //
     return false;
   }
   return refresh_token === tokenInDB.dataValues.refresh_token;
-}
-//
-///////////////////////////////////////////////////
-async function findTransactionFn(model, id, type) {
-  //
-  const result = await model.findOne({ where: { id: id }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
-  //
-  return { ...result.dataValues, Product: { ...result.Product.dataValues, type } };
 }
 //
 /////////////////////////////////////////////////////
@@ -180,6 +176,46 @@ async function createNotification(userNum, message) {
   //
   const newNotification = await Notification.findOne({ where: { id: newNotificationId }, attributes: ["message", "created_at"] });
   return newNotification.dataValues;
+}
+//
+///////////////////////////////////////
+const fileFilter = async (req, file, cb) => {
+  //
+  console.log("ddddddd");
+  if (req.body.name === undefined) {
+    //
+    cb(null, true);
+    return;
+  }
+  const { name } = req.body;
+  //
+  const checkOverlap = await Product.findOne({ where: { name } });
+  if (checkOverlap === null) cb(null, true);
+  else {
+    cb("같은 이름의 상품이 이미 등록되어 있습니다.", false);
+  }
+};
+//
+///////////////////////////////////
+function editProductFn(body, res) {
+  //
+  console.log(Object.keys(body));
+  const updateData = { ...body };
+  const id = updateData.id;
+  delete updateData.id;
+  //
+  Product.update(updateData, { where: { id } }).then(() => {
+    //
+    res.send({ isSuccess: true, alertMsg: "상품 수정이 완료 되었습니다.", updateData: body });
+  });
+}
+//
+///////////////////////////////////////////////////
+async function findTransactionFn(model, id, type) {
+  //
+  const result = await model.findOne({ where: { id: id }, attributes: ["is_refund", "created_at", "updated_at"], include: [{ model: Product, attributes: ["id", "name", "price"] }] });
+  //
+  return { ...result.dataValues, Product: { ...result.Product.dataValues, type } };
 }
 //
 ////////////////////////////////////////
@@ -199,4 +235,6 @@ module.exports = {
   changeToRefundFn,
   verifyTokenFn,
   getUserDataFn,
+  editProductFn,
+  fileFilter,
 };
