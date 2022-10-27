@@ -10,7 +10,7 @@ export const login_action = (loginData, toMainPageFn) => {
     //
     const _login_action = await axios({
       //
-      url: "http://localhost:8000/login",
+      url: "http://3.34.144.225/login",
       data: loginData,
       method: "post",
     });
@@ -45,7 +45,7 @@ export const updateMyData_action = (nickname, toLoginPageFn) => {
     const _updateMyData_action = await axios({
       //
       method: "post",
-      url: "http://localhost:8000/updateMyData",
+      url: "http://3.34.144.225/updateMyData",
       data: { userNum, nickname, access_token, refresh_token },
     });
     const { isSuccess, alertMsg, newAccessToken } = _updateMyData_action.data;
@@ -76,7 +76,7 @@ export const refreshPage_action = (toLoginPageFn) => {
       //
       method: "post",
       data: { access_token, refresh_token },
-      url: "http://localhost:8000/refreshPage",
+      url: "http://3.34.144.225/refreshPage",
     });
     const { isSuccess, newAccessToken, userData } = _refreshPage_action.data;
     if (isSuccess) {

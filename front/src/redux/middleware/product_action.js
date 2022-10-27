@@ -8,7 +8,7 @@ export const getAllProducts_action = () => {
     //
     const _getAllProducts_action = await axios({
       //
-      url: "http://localhost:8000/getAllProducts",
+      url: "http://3.34.144.225/getAllProducts",
       method: "post",
     });
     const products = _getAllProducts_action.data;
@@ -34,7 +34,7 @@ export const addProduct_action = (formData, toLoginPageFn) => {
       //
       data: formData,
       method: "post",
-      url: "http://localhost:8000/addProduct/formData",
+      url: "http://3.34.144.225/addProduct/formData",
     });
     const { isSuccess, alertMsg, newProduct } = _addProduct_action.data;
     if (isSuccess) {
@@ -59,7 +59,7 @@ export const editProduct_action = (_updateData, path, toMainPageFn, toLoginPageF
       //
       method: "post",
       data: _updateData,
-      url: `http://localhost:8000/editProduct${path}`,
+      url: `http://3.34.144.225/editProduct${path}`,
     });
     const { isSuccess, alertMsg, updateData } = _editProduct_action.data;
     console.log("is", isSuccess);
@@ -77,7 +77,7 @@ async function verifyTokens(_dispatch, toLoginPageFn) {
   const { access_token, refresh_token } = sessionStorage;
   const verifyTokens = await axios({
     //
-    url: "http://localhost:8000/verifyTokens",
+    url: "http://3.34.144.225/verifyTokens",
     data: { access_token, refresh_token },
     method: "post",
   });

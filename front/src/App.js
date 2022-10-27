@@ -39,7 +39,7 @@ function App() {
       //
       const toLoginPageFn = () => nav("/login");
       //
-      let adminAccountNum = await axios({ url: "http://localhost:8000", method: "post" });
+      let adminAccountNum = await axios({ url: "http://3.34.144.225", method: "post" });
       adminAccountNum = adminAccountNum.data.adminAccountNum;
       //
       dispatch({ type: "SET_ADMIN_NUM", payload: adminAccountNum });

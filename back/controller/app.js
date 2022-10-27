@@ -25,7 +25,7 @@ app.listen(PORT, () => console.log("PORT", PORT));
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ㅜ 브라우저가 서로 다른 도메인/포트의 서버로 요청했을 때 발생하는 cors 에러를 위해 해당 도메인에 대하여 접근 허용 설정
-const options = { origin: "http://localhost:3000" };
+const options = { origin: "http://15.165.19.0" };
 const cors = require("cors");
 app.use(cors(options));
 //

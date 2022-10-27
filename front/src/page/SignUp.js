@@ -52,7 +52,7 @@ const SignUp = () => {
     //
     const _signUp = await axios({
       //
-      url: "http://localhost:8000/signUp",
+      url: "http://3.34.144.225/signUp",
       data: _inputData,
       method: "post",
     });

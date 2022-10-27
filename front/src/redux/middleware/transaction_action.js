@@ -16,7 +16,7 @@ export const buy_action = (type, toLoginPageFn) => {
     const _buy_action = await axios({
       //
       method: "post",
-      url: "http://localhost:8000/buy",
+      url: "http://3.34.144.225/buy",
       data: { userNum, type, id, name, productPoints, newPoints, access_token, refresh_token },
     });
     const { isSuccess, alertMsg, newAccessToken, newTransition, newNotification } = _buy_action.data;
@@ -48,7 +48,7 @@ export const refund_action = (type, productNum, name, price, created_at, toLogin
     const _refund_action = await axios({
       //
       method: "post",
-      url: "http://localhost:8000/refund",
+      url: "http://3.34.144.225/refund",
       data: { userNum, type, productNum, name, created_at, productPoints, newPoints, access_token, refresh_token },
     });
     const { isSuccess, alertMsg, newAccessToken, updated_at, newNotification } = _refund_action.data;
