@@ -5,12 +5,13 @@ const init = {
   isLogin: false,
   nickname: null,
   isAdmin: false,
+  adminNum: null,
   isUserDataReady: false,
   notifications: new Array(0),
 };
 function reducer(state = init, action) {
   //
-  const { isUserDataReady, isLogin, isAdmin, userNum, nickname, points, notifications } = state;
+  const { isUserDataReady, isLogin, isAdmin, userNum, adminNum, nickname, points, notifications } = state;
   const { type, payload } = action;
   switch (type) {
     //
@@ -24,25 +25,25 @@ function reducer(state = init, action) {
       return { ...state, isUserDataReady: true };
     //
     ///////////////////
-    case "ADMIN_LOGIN":
-      return { ...state, isAdmin: true };
-    //
-    ///////////////////
-    case "ADMIN_LOGOUT":
-      state.isAdmin = false;
-      return state;
+    case "SET_ADMIN_NUM":
+      return { ...state, adminNum: payload };
     //
     /////////////
     case "LOGIN":
-      state.nickname = payload.nickname;
-      state.userNum = payload.userNum;
-      state.isLogin = true;
-      return state;
+      if (payload.userNum === adminNum) {
+        //
+        state.isAdmin = true;
+      }
+      console.log(state);
+      return { ...state, isLogin: true, userNum: payload.userNum, nickname: payload.nickname };
     //
     //////////////
     case "LOGOUT":
+      if (userNum === adminNum) {
+        //
+        state.isAdmin = false;
+      }
       const moveToPageFn = payload;
-      console.log(payload);
       //
       sessionStorage.removeItem("access_token");
       sessionStorage.removeItem("refresh_token");

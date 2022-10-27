@@ -61,18 +61,18 @@ app.use("/", userRouter);
 const bcrypt = require("bcrypt");
 app.post("/", async (req, res) => {
   //
-  let adminAccountId = null;
+  let adminAccountNum = null;
   const admin = "admin";
   const SALT = Number(process.env.BCRYPT_SALT);
   //
-  adminAccountId = await User.findOne({ where: { user_id: admin }, attributes: ["id"] });
-  if (adminAccountId === null) {
+  adminAccountNum = await User.findOne({ where: { user_id: admin }, attributes: ["id"] });
+  if (adminAccountNum === null) {
     //
     const password = process.env.ADMIN_ACCOUNT_PASSWORD;
     const _password = await bcrypt.hash(password, SALT);
     //
-    adminAccountId = await User.create({ user_id: admin, nickname: admin, password: _password });
+    adminAccountNum = await User.create({ user_id: admin, nickname: admin, password: _password });
   }
-  adminAccountId = adminAccountId.dataValues.id;
-  res.send({ adminAccountId });
+  adminAccountNum = adminAccountNum.dataValues.id;
+  res.send({ adminAccountNum });
 });
