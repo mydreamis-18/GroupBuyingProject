@@ -48,11 +48,11 @@ function App() {
   //
   useEffect(() => {
     //
-    if (userNum !== undefined && userNum === adminId) {
+    if (userNum !== null && userNum === adminId) {
       //
       dispatch({ type: "ADMIN_LOGIN" });
     }
-  }, [userNum]);
+  }, [adminId]);
   //
   if (isLoadingPage && isUserDataReady && isProductDataReady) {
     //

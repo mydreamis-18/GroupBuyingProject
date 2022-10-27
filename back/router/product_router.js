@@ -1,4 +1,4 @@
-const { verifyTokensMiddleware, fileFilter, editProductFn } = require("../service");
+const { verifyTokensMiddleware, fileFilter } = require("../service");
 const { Product } = require("../model");
 const express = require("express");
 const router = express.Router();
@@ -65,32 +65,43 @@ router.post("/addProduct/formData", (req, res) => {
 router.post("/editProduct/formData", async (req, res) => {
   //
   const addProductMulter = multer({ storage, fileFilter }).single("img");
-  addProductMulter(req, res, (err) => {
+  addProductMulter(req, res, async (err) => {
     //
     if (err) {
       //
       res.send({ isSuccess: false, alertMsg: err });
       return;
     }
-    editProductFn(req.body, res);
+    const updateData = { ...req.body };
+    const id = req.body.id;
+    delete req.body.id;
+    //
+    await Product.update(updateData, { where: { id } });
+    //
+    res.send({ isSuccess: true, alertMsg: "상품 수정이 완료 되었습니다.", updateData });
   });
 });
 //
 ///////////////////////////////////////////
-router.post("/editProduct", (req, res) => {
+router.post("/editProduct", async (req, res) => {
   //
   if (req.body.name !== undefined) {
     //
-    Product.findOne({ where: { name: req.body.name } }).then((obj) => {
-      if (obj !== null) {
-        //
-        res.send({ isSuccess: false, alertMsg: "같은 이름의 상품이 이미 등록되어 있습니다." });
-        return;
-      }
-    });
+    const isOverlap = await Product.findOne({ where: { name: req.body.name } });
+    if (isOverlap !== null) {
+      //
+      res.send({ isSuccess: false, alertMsg: "같은 이름의 상품이 이미 등록되어 있습니다." });
+      return;
+    }
   }
+  const updateData = { ...req.body };
+  const id = req.body.id;
+  delete req.body.id;
   //
-  else editProductFn(req.body, res);
+  Product.update(updateData, { where: { id } }).then(() => {
+    //
+    res.send({ isSuccess: true, alertMsg: "상품 수정이 완료 되었습니다.", updateData });
+  });
 });
 //
 module.exports = router;

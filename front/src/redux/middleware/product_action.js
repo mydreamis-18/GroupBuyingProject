@@ -51,8 +51,10 @@ export const editProduct_action = (_updateData, path, toMainPageFn, toLoginPageF
   return async (_dispatch, getState) => {
     //
     const _isSuccess = await verifyTokens(_dispatch, toLoginPageFn);
+    console.log(_isSuccess);
     if (!_isSuccess) return;
     //
+    console.log("please");
     const _editProduct_action = await axios({
       //
       method: "post",
@@ -60,6 +62,7 @@ export const editProduct_action = (_updateData, path, toMainPageFn, toLoginPageF
       url: `http://localhost:8000/editProduct${path}`,
     });
     const { isSuccess, alertMsg, updateData } = _editProduct_action.data;
+    console.log("is", isSuccess);
     if (isSuccess) {
       //
       _dispatch({ type: "EDIT_PRODUCT", payload: { updateData, toMainPageFn } });
@@ -86,5 +89,6 @@ async function verifyTokens(_dispatch, toLoginPageFn) {
   //
   else _dispatch({ type: "LOGOUT", payload: toLoginPageFn });
   //
+  console.log(isSuccess);
   return isSuccess;
 }

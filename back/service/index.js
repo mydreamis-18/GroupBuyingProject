@@ -181,7 +181,6 @@ async function createNotification(userNum, message) {
 ///////////////////////////////////////
 const fileFilter = async (req, file, cb) => {
   //
-  console.log("ddddddd");
   if (req.body.name === undefined) {
     //
     cb(null, true);
@@ -195,20 +194,6 @@ const fileFilter = async (req, file, cb) => {
     cb("같은 이름의 상품이 이미 등록되어 있습니다.", false);
   }
 };
-//
-///////////////////////////////////
-function editProductFn(body, res) {
-  //
-  console.log(Object.keys(body));
-  const updateData = { ...body };
-  const id = updateData.id;
-  delete updateData.id;
-  //
-  Product.update(updateData, { where: { id } }).then(() => {
-    //
-    res.send({ isSuccess: true, alertMsg: "상품 수정이 완료 되었습니다.", updateData: body });
-  });
-}
 //
 ///////////////////////////////////////////////////
 async function findTransactionFn(model, id, type) {
@@ -235,6 +220,5 @@ module.exports = {
   changeToRefundFn,
   verifyTokenFn,
   getUserDataFn,
-  editProductFn,
   fileFilter,
 };

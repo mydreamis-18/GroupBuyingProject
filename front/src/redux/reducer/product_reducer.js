@@ -40,7 +40,7 @@ function reducer(state = init, action) {
       state.products.forEach((el, idx) => {
         //
         const { updateData } = payload;
-        if (updateData.id === el.id) {
+        if (Number(updateData.id) === el.id) {
           //
           delete updateData.id;
           for (const key in updateData) {
@@ -55,7 +55,6 @@ function reducer(state = init, action) {
           return;
         }
       });
-      console.log(state);
       payload.toMainPageFn();
       return state;
     //

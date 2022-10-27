@@ -215,7 +215,6 @@ const InputProduct = (props) => {
     formData.append("img", img);
     URL.revokeObjectURL(img);
     //
-    console.log(formData);
     dispatch(addProduct_action(formData, toLoginPageFn));
   }
   //
@@ -248,7 +247,8 @@ const InputProduct = (props) => {
       //
       updateProduct.end_date = endDate.toString();
     }
-    if (img !== undefined) {
+    console.log(img);
+    if (img !== "") {
       //
       const formData = new FormData();
       for (const key in updateProduct) {

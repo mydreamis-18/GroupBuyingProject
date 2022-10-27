@@ -25,8 +25,7 @@ function reducer(state = init, action) {
     //
     ///////////////////
     case "ADMIN_LOGIN":
-      state.isAdmin = true;
-      return state;
+      return { ...state, isAdmin: true };
     //
     ///////////////////
     case "ADMIN_LOGOUT":

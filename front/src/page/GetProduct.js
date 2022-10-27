@@ -76,7 +76,7 @@ const GetProduct = () => {
           <LeftP>{DDay}</LeftP>
           <LeftP>바로 구매가: {product.price}원</LeftP>
           <LeftP>공동 구매가: {product.discount_price}원</LeftP>
-          <LeftP>현재 공동 구매자: 명</LeftP>
+          <LeftP>현재 공동 구매자: 추후 구현 예정</LeftP>
           <LeftP>잔여 수량: {product.quantity}개</LeftP>
           <div style={{ display: "flex" }}>
             <Button style={{ marginLeft: "0" }} onClick={prevProductFn}>
