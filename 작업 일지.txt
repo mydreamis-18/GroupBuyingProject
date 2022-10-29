@@ -305,7 +305,7 @@ formData...
 
 -- 20:30
 모든 input 태그에 값이 있으나 ref 객체에 데이터가 저장되지 않는 15th 문제 발생
-POST http://localhost:8000/addProduct net::ERR_CONNECTION_REFUSED
+POST http://3.34.144.225/addProduct net::ERR_CONNECTION_REFUSED
 Uncaught (in promise) AxiosError {message: 'Network Error',
 WHERE parameter "name" has invalid "undefined" value
 
@@ -2002,3 +2002,14 @@ DB에서 관리자의 DB상 id 값을 먼저 가져온 다음에
 
 이제 AWS 배포하고
 프로젝트 종료!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+-- [ 22.10.29 ]
+
+-- 22:58
+이미지 파일 인코딩 문제 해결 중...
+근데 원래 백엔드에서 DB 작업 후에 바로 보내도
+dataValues 부분만 프론트에서 받아지는 건가...?
+
+그리고 만약 데이터를 보내지 않는다고 할 때
+post 방식이 아닌 get 방식을 사용하면
+주소창에 입력해서 접근이 가능해지는 거 아닌가...

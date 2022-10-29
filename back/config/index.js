@@ -11,8 +11,9 @@ const config = {
     // ㅜ 한국 시간 설정
     timezone: "+09:00",
     dialectOptions: {
-      typeCast: true,
-      dateStrings: true,
+      // typeCast: true,
+      // dateStrings: true,
+      timezone: "+09:00",
     },
   },
 };

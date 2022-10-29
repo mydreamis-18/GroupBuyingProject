@@ -27,7 +27,7 @@ function reducer(state = init, action) {
     ////////////////////////
     case "GET_ALL_PRODUCTS":
       // console.log("1");
-      console.log("GET_ALL_PRODUCTS", products);
+      console.log("GET_ALL_PRODUCTS", payload);
       return { ...state, products: payload, productsLength: payload.length, isProductDataReady: true };
     //
     ///////////////////
